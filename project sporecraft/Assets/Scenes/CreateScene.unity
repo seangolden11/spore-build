@@ -674,7 +674,8 @@ MonoBehaviour:
   height: 2
   cylinderDivision: 6
   topOffest: 0
-  numberOfCylinder: 1
+  numberOfCylinder: 0
+  botOffset: 0
 --- !u!1 &925912326
 GameObject:
   m_ObjectHideFlags: 0
