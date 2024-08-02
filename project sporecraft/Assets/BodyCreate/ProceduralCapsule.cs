@@ -22,6 +22,7 @@ public class ProceduralCapsule : MonoBehaviour
     
 
     List<Transform> listBones;
+    List<Vector3> listLocalBones;
 
     private void Start()
     {
@@ -30,6 +31,7 @@ public class ProceduralCapsule : MonoBehaviour
         sRenderer = gameObject.AddComponent<SkinnedMeshRenderer>();
         sRenderer.material = new Material(Shader.Find("Standard"));
         listBones = new List<Transform>();
+        listLocalBones = new List<Vector3>();
         CreateBones(0,Vector3.zero);
     }
 
@@ -204,10 +206,14 @@ public class ProceduralCapsule : MonoBehaviour
 
         // 본 배열에 저장
         if (mode == 2)
+        {
             listBones.Add(newBone.transform);
+            listLocalBones.Add(newBone.transform.localPosition);
+        }
         else
         {
             listBones.Insert(0, newBone.transform);
+            listLocalBones.Insert(0, newBone.transform.localPosition);
             if (listBones.Count > 1)
             {
                 topBone.GetComponent<HingeJoint>().connectedBody = rb;
@@ -219,6 +225,10 @@ public class ProceduralCapsule : MonoBehaviour
             }
         }
 
+
+        
+
+
         SetupSkinnedMeshRenderer(listBones.ToArray());
     }
 
@@ -226,6 +236,8 @@ public class ProceduralCapsule : MonoBehaviour
 
     void SetupSkinnedMeshRenderer(Transform[] bones)
     {
+
+        
         sRenderer.bones = bones;
         sRenderer.sharedMesh = meshFilter.mesh;
 
@@ -361,10 +373,7 @@ public class ProceduralCapsule : MonoBehaviour
                 // 각 본에 대해 거리를 계산하고 가중치를 할당
                 for (int l = 0; l < bones.Length; l++)
                 {
-                    float distance = Vector3.Distance(bones[l].localPosition, vertex);
-                    Debug.Log(bones[l].localPosition);
-                    Debug.Log(vertex);
-                    Debug.Log(distance);
+                    float distance = Vector3.Distance(listLocalBones[l], vertex);
                     distance = Mathf.Max(0.00001f, distance);
                     boneWeights.Add(new KeyValuePair<int, float>(l, 1/distance)); // 거리가 가까울수록 높은 가중치
                 }
