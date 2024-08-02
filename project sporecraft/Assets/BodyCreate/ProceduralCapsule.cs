@@ -18,6 +18,7 @@ public class ProceduralCapsule : MonoBehaviour
     SkinnedMeshRenderer sRenderer;
     GameObject topBone;
     GameObject bottomBone;
+    int weightrange = 3;
     
 
     List<Transform> listBones;
@@ -241,8 +242,8 @@ public class ProceduralCapsule : MonoBehaviour
         AssignBoneWeights(sRenderer.sharedMesh, sRenderer.bones);
     }
 
-   
-    void AssignBoneWeights(Mesh mesh, Transform[] bones)
+
+    /*void AssignBoneWeights(Mesh mesh, Transform[] bones)
     {
         BoneWeight[] weights = new BoneWeight[mesh.vertexCount];
 
@@ -287,41 +288,41 @@ public class ProceduralCapsule : MonoBehaviour
 
                 for (int k = 0; k < cylinderDivision; k++)
                 {
-                    float[] boneWeights = new float[bones.Length];
+                    List<KeyValuePair<int, float>> boneWeights = new List<KeyValuePair<int, float>>();
                     Vector3 vertex = vertices[i];
 
                     // 각 본에 대해 거리를 계산하고 가중치를 할당
                     for (int l = 0; l < bones.Length; l++)
                     {
-                        float distance = Vector3.Distance(bones[l].position, vertex);
-                        boneWeights[l] = 1.0f / (distance + 0.001f); // 거리가 가까울수록 높은 가중치
+                        float distance = Vector3.Distance(bones[l].position, vertex) - radius;
+                        boneWeights.Add(new KeyValuePair<int,float>(l,distance)); // 거리가 가까울수록 높은 가중치
                     }
+
+                    boneWeights.Sort((x, y) => x.Value.CompareTo(y.Value));
 
                     // 가중치 정규화
                     float totalWeight = 0.0f;
-                    foreach (float Weight in boneWeights)
+                    for(int l=0;l< Mathf.Min(weightrange,boneWeights.Count);l++)
                     {
-                        totalWeight += Weight;
-                    }
-                    for (int l = 0; l < boneWeights.Length; l++)
-                    {
-                        boneWeights[l] /= totalWeight;
+                        totalWeight += boneWeights[l].Value;
                     }
                     for (int l = 0; l <= subdivisionAround; l++,i++)
                     {
                         // BoneWeight 설정
-                        weights[i].boneIndex0 = 0;
-                        weights[i].weight0 = boneWeights[0];
+                        weights[i].boneIndex0 = boneWeights[0].Key;
+                        weights[i].weight0 = boneWeights[0].Value / totalWeight;
                         if (bones.Length > 1)
                         {
-                            weights[i].boneIndex1 = 1;
-                            weights[i].weight1 = boneWeights[1];
+                            weights[i].boneIndex1 = boneWeights[1].Key;
+                            weights[i].weight1 = boneWeights[1].Value / totalWeight;
                         }
                         if (bones.Length > 2)
                         {
-                            weights[i].boneIndex2 = 2;
-                            weights[i].weight2 = boneWeights[2];
+                            weights[i].boneIndex2 = boneWeights[2].Key;
+                            weights[i].weight2 = boneWeights[2].Value / totalWeight;
                         }
+                        Debug.Log(boneWeights[0].Value/totalWeight);
+                        Debug.Log(boneWeights[1].Value / totalWeight);
                     }
                     
                 }
@@ -340,16 +341,68 @@ public class ProceduralCapsule : MonoBehaviour
         Debug.Log(i);
 
         mesh.boneWeights = weights;
+    }*/
+
+    void AssignBoneWeights(Mesh mesh, Transform[] bones)
+    {
+        BoneWeight[] weights = new BoneWeight[mesh.vertexCount];
+
+        int topThreshold = ((subdivisionHeight / 2) + 1) * (subdivisionAround + 1);
+        int i;
+
+
+        for (i = 0; i < mesh.vertexCount;i++)
+        {
+
+           
+                List<KeyValuePair<int, float>> boneWeights = new List<KeyValuePair<int, float>>();
+                Vector3 vertex = vertices[i];
+
+                // 각 본에 대해 거리를 계산하고 가중치를 할당
+                for (int l = 0; l < bones.Length; l++)
+                {
+                    float distance = Vector3.Distance(bones[l].localPosition, vertex);
+                    Debug.Log(bones[l].localPosition);
+                    Debug.Log(vertex);
+                    Debug.Log(distance);
+                    distance = Mathf.Max(0.00001f, distance);
+                    boneWeights.Add(new KeyValuePair<int, float>(l, 1/distance)); // 거리가 가까울수록 높은 가중치
+                }
+
+                boneWeights.Sort((x, y) => y.Value.CompareTo(x.Value));
+
+                // 가중치 정규화
+                float totalWeight = 0.0f;
+                for (int l = 0; l < Mathf.Min(weightrange, boneWeights.Count); l++)
+                {
+                    totalWeight += boneWeights[l].Value;
+                }
+                
+                    // BoneWeight 설정
+                    weights[i].boneIndex0 = boneWeights[0].Key;
+                    weights[i].weight0 = boneWeights[0].Value / totalWeight;
+                    if (bones.Length > 1)
+                    {
+                        weights[i].boneIndex1 = boneWeights[1].Key;
+                        weights[i].weight1 = boneWeights[1].Value / totalWeight;
+                    }
+                    if (bones.Length > 2)
+                    {
+                        weights[i].boneIndex2 = boneWeights[2].Key;
+                        weights[i].weight2 = boneWeights[2].Value / totalWeight;
+                    }
+
+
+
+
+
+
+
+        }
+
+
+
+        mesh.boneWeights = weights;
     }
 
-
-    
-
-
-
-
-
-
-
-
-}
+    }
