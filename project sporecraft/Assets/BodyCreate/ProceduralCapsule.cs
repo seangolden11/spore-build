@@ -185,21 +185,20 @@ public class ProceduralCapsule : MonoBehaviour
     {
         GameObject newBone = new GameObject("Bone" + numberOfCylinder); //본추가
         
+        newBone.AddComponent<CapsuleCollider>();
 
         // Rigidbody 추가
         Rigidbody rb = newBone.AddComponent<Rigidbody>();
-        rb.isKinematic = true;  // 물리 계산은 받되, 자동으로 움직이지는 않게 설정
+        rb.drag = float.PositiveInfinity;
+        rb.useGravity = false;
+        rb.isKinematic = false;
+        //rb.constraints |= RigidbodyConstraints.FreezePositionX;
+        //rb.constraints |= RigidbodyConstraints.FreezeRotationX;
+
 
         newBone.transform.parent = transform; //부모설정
 
-        // HingeJoint 추가
-        HingeJoint hinge = newBone.AddComponent<HingeJoint>();
-        hinge.axis = Vector3.up;  // 회전 축 설정
-        hinge.useLimits = true;  // 회전 제한 사용 설정
-        JointLimits limits = new JointLimits();
-        limits.min = -90.0f;
-        limits.max = 90.0f;
-        hinge.limits = limits;
+        
 
         
         newBone.transform.localPosition = bonePos;
@@ -216,7 +215,10 @@ public class ProceduralCapsule : MonoBehaviour
             listLocalBones.Insert(0, newBone.transform.localPosition);
             if (listBones.Count > 1)
             {
+                AddHingeJoint(topBone);
                 topBone.GetComponent<HingeJoint>().connectedBody = rb;
+                topBone.AddComponent<Dragable>();
+                topBone = newBone;
             }
             else
             {
@@ -354,6 +356,19 @@ public class ProceduralCapsule : MonoBehaviour
 
         mesh.boneWeights = weights;
     }*/
+
+    void AddHingeJoint(GameObject newBone)
+    {
+        // HingeJoint 추가
+        HingeJoint hinge = newBone.AddComponent<HingeJoint>();
+        hinge.axis = Vector3.zero;  // 회전 축 설정
+        hinge.useLimits = true;  // 회전 제한 사용 설정
+        JointLimits limits = new JointLimits();
+        limits.min = -45.0f;
+        limits.max = 45.0f;
+        hinge.limits = limits;
+        hinge.anchor = Vector3.zero + new Vector3(0,0,-height/2);
+    }
 
     void AssignBoneWeights(Mesh mesh, Transform[] bones)
     {
