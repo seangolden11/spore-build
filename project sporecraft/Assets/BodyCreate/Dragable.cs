@@ -1,7 +1,11 @@
+using Unity.VisualScripting;
 using UnityEngine;
 
 public class Dragable : MonoBehaviour
 {
+
+    public LayerMask BodyLayer;
+    public LayerMask BoneLayer;
     private Camera mainCamera;
     private Vector3 offset;
     private float zCoord;
@@ -11,6 +15,7 @@ public class Dragable : MonoBehaviour
         mainCamera = Camera.main;
     }
 
+    
     void OnMouseDown()
     {
         // 오브젝트를 클릭할 때의 Z좌표를 저장

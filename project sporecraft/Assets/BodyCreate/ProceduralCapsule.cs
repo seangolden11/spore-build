@@ -19,6 +19,8 @@ public class ProceduralCapsule : MonoBehaviour
     GameObject topBone;
     GameObject bottomBone;
     int weightrange = 4;
+    MeshCollider mc;
+    Mesh bakedMesh;
     
 
     List<Transform> listBones;
@@ -30,9 +32,19 @@ public class ProceduralCapsule : MonoBehaviour
         meshFilter.mesh = CreateCapsuleMesh(subdivisionHeight, subdivisionAround, radius, height);
         sRenderer = gameObject.AddComponent<SkinnedMeshRenderer>();
         sRenderer.material = new Material(Shader.Find("Standard"));
+        mc = GetComponent<MeshCollider>();
+        bakedMesh = new Mesh();
+        UpdateMeshCollider();
         listBones = new List<Transform>();
         listLocalBones = new List<Vector3>();
         CreateBones(0,Vector3.zero);
+        
+    }
+
+    public void UpdateMeshCollider()
+    {
+        sRenderer.BakeMesh(bakedMesh);
+        mc.sharedMesh = bakedMesh;
     }
 
     public void AppendCapsule(int liftAmount)
@@ -185,7 +197,10 @@ public class ProceduralCapsule : MonoBehaviour
     {
         GameObject newBone = new GameObject("Bone" + numberOfCylinder); //본추가
         
-        newBone.AddComponent<CapsuleCollider>();
+        CapsuleCollider newBoneCollider = newBone.AddComponent<CapsuleCollider>();
+        newBoneCollider.isTrigger = true;
+        
+        newBone.layer = LayerMask.NameToLayer("Bone Layer");
 
         // Rigidbody 추가
         Rigidbody rb = newBone.AddComponent<Rigidbody>();
@@ -202,7 +217,7 @@ public class ProceduralCapsule : MonoBehaviour
 
         
         newBone.transform.localPosition = bonePos;
-        newBone.AddComponent<Dragable>();
+        
 
         // 본 배열에 저장
         if (mode == 2)
@@ -243,6 +258,7 @@ public class ProceduralCapsule : MonoBehaviour
         
         sRenderer.bones = bones;
         sRenderer.sharedMesh = meshFilter.mesh;
+        UpdateMeshCollider();
 
         // 바인드 포즈 설정
         Matrix4x4[] bindPoses = new Matrix4x4[bones.Length];
