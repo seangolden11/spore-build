@@ -18,7 +18,7 @@ public class ProceduralCapsule : MonoBehaviour
     SkinnedMeshRenderer sRenderer;
     GameObject topBone;
     GameObject bottomBone;
-    int weightrange = 3;
+    int weightrange = 4;
     
 
     List<Transform> listBones;
@@ -192,7 +192,7 @@ public class ProceduralCapsule : MonoBehaviour
         rb.drag = float.PositiveInfinity;
         rb.useGravity = false;
         rb.isKinematic = false;
-        //rb.constraints |= RigidbodyConstraints.FreezePositionX;
+        rb.constraints |= RigidbodyConstraints.FreezePositionX;
         //rb.constraints |= RigidbodyConstraints.FreezeRotationX;
 
 
@@ -202,6 +202,7 @@ public class ProceduralCapsule : MonoBehaviour
 
         
         newBone.transform.localPosition = bonePos;
+        newBone.AddComponent<Dragable>();
 
         // 본 배열에 저장
         if (mode == 2)
@@ -217,7 +218,7 @@ public class ProceduralCapsule : MonoBehaviour
             {
                 AddHingeJoint(topBone);
                 topBone.GetComponent<HingeJoint>().connectedBody = rb;
-                topBone.AddComponent<Dragable>();
+                
                 topBone = newBone;
             }
             else
@@ -364,10 +365,10 @@ public class ProceduralCapsule : MonoBehaviour
         hinge.axis = Vector3.zero;  // 회전 축 설정
         hinge.useLimits = true;  // 회전 제한 사용 설정
         JointLimits limits = new JointLimits();
-        limits.min = -45.0f;
-        limits.max = 45.0f;
+        limits.min = -30.0f;
+        limits.max = 30.0f;
         hinge.limits = limits;
-        hinge.anchor = Vector3.zero + new Vector3(0,0,-height/2);
+        //hinge.anchor = Vector3.zero + new Vector3(0,0,-height/2);
     }
 
     void AssignBoneWeights(Mesh mesh, Transform[] bones)
@@ -388,9 +389,10 @@ public class ProceduralCapsule : MonoBehaviour
                 // 각 본에 대해 거리를 계산하고 가중치를 할당
                 for (int l = 0; l < bones.Length; l++)
                 {
-                    float distance = Vector3.Distance(listLocalBones[l], vertex);
-                    distance = Mathf.Max(0.00001f, distance);
-                    boneWeights.Add(new KeyValuePair<int, float>(l, 1/distance)); // 거리가 가까울수록 높은 가중치
+                    float distance = Vector3.Distance(listLocalBones[l], vertex) - 1;
+                    distance = Mathf.Exp(-distance * 1);
+                    //distance = Mathf.Max(0.00001f, distance);
+                    boneWeights.Add(new KeyValuePair<int, float>(l, distance)); // 거리가 가까울수록 높은 가중치
                 }
 
                 boneWeights.Sort((x, y) => y.Value.CompareTo(x.Value));
@@ -415,7 +417,11 @@ public class ProceduralCapsule : MonoBehaviour
                         weights[i].boneIndex2 = boneWeights[2].Key;
                         weights[i].weight2 = boneWeights[2].Value / totalWeight;
                     }
-
+                    if (bones.Length > 3)
+                    {
+                        weights[i].boneIndex3 = boneWeights[3].Key;
+                        weights[i].weight3 = boneWeights[3].Value / totalWeight;
+                    }
 
 
 
