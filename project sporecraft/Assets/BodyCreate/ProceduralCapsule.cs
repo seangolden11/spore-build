@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.XR;
 
 public class ProceduralCapsule : MonoBehaviour
 {
@@ -11,13 +12,15 @@ public class ProceduralCapsule : MonoBehaviour
     public float topOffest = 0;
     public int numberOfCylinder = 0;
     public int botOffset = 0;
+    public GameObject topArrow;
+    public GameObject bottomArrow;
 
     private List<Vector3> vertices;
     private List<int> triangles;
     MeshFilter meshFilter;
     SkinnedMeshRenderer sRenderer;
-    GameObject topBone;
-    GameObject bottomBone;
+    public GameObject topBone;
+    public GameObject bottomBone;
     int weightrange = 4;
     MeshCollider mc;
     Mesh bakedMesh;
@@ -37,8 +40,9 @@ public class ProceduralCapsule : MonoBehaviour
         UpdateMeshCollider();
         listBones = new List<Transform>();
         listLocalBones = new List<Vector3>();
-        CreateBones(0,Vector3.zero);
+        CreateBones(1,Vector3.zero);
         
+
     }
 
     public void UpdateMeshCollider()
@@ -47,36 +51,139 @@ public class ProceduralCapsule : MonoBehaviour
         mc.sharedMesh = bakedMesh;
     }
 
-    public void AppendCapsule(int liftAmount)
+    public void AppendCapsule(int mode)
     {
+        int liftAmount = 2;
         Mesh mesh = meshFilter.mesh;
-        topOffest += liftAmount;
-
-        int topThreshold = ((subdivisionHeight / 2)+1) * (subdivisionAround+1); // 위쪽 반구의 시작점
-
-        for (int i = 0; i < topThreshold; i++)
-        {
-            Vector3 tempVector3 = vertices[i];
-            tempVector3.y += liftAmount; // liftAmount 만큼 y좌표 증가
-            vertices[i] = tempVector3;
-        }
         
-        for (int i = 1; i < cylinderDivision+1; i++)
+        List<int> tempTriangles = new List<int>();
+
+
+
+        if (mode == 1)
         {
-            float y = Mathf.Lerp((height / 2) + topOffest, ((height / 2) + topOffest) - height, i / (float)cylinderDivision);
-            for (int j = 0; j <= subdivisionAround; j++)
+            topOffest += liftAmount;
+            int topThreshold = ((subdivisionHeight / 2) + 1) * (subdivisionAround + 1); // 위쪽 반구의 시작점
+
+            for (int i = 0; i < topThreshold; i++)
             {
-                float theta = 2 * Mathf.PI * j / subdivisionAround;
-                float x = radius * Mathf.Cos(theta);
-                float z = radius * Mathf.Sin(theta);
-                vertices.Insert(++topThreshold-1, new Vector3(x, y, z));
+                Vector3 tempVector3 = vertices[i];
+                tempVector3.y += liftAmount; // liftAmount 만큼 y좌표 증가
+                vertices[i] = tempVector3;
             }
+
+            for (int i = 1; i < cylinderDivision + 1; i++)
+            {
+                float y = Mathf.Lerp((height / 2) + topOffest, ((height / 2) + topOffest) - height, i / (float)cylinderDivision);
+                for (int j = 0; j <= subdivisionAround; j++)
+                {
+                    float theta = 2 * Mathf.PI * j / subdivisionAround;
+                    float x = radius * Mathf.Cos(theta);
+                    float z = radius * Mathf.Sin(theta);
+                    vertices.Insert(++topThreshold - 1, new Vector3(x, y, z));
+                }
+            }
+
+            numberOfCylinder++;
+
+
+            //삼각형 계산
+            tempTriangles = CalculateTriangles(tempTriangles);
+
+            mesh.vertices = vertices.ToArray();
+            mesh.triangles = tempTriangles.ToArray();
+            mesh.RecalculateNormals(); // 노멀을 재계산하여 라이팅을 조정
+            meshFilter.mesh = mesh; // 메쉬 변경사항 적용
+
+            Vector3 newVector = Vector3.zero;
+            newVector.y += topOffest;
+            CreateBones(1, newVector);
         }
 
-        numberOfCylinder++;
+        else if(mode == 2 && numberOfCylinder > 1)
+        {
+            topOffest -= liftAmount;
+            int topThreshold = ((subdivisionHeight / 2) + 1) * (subdivisionAround + 1); // 위쪽 반구의 시작점
 
-        List<int> tempTriangles = new List<int>();
-        //삼각형 계산
+            for (int i = 0; i < topThreshold; i++)
+            {
+                Vector3 tempVector3 = vertices[i];
+                tempVector3.y -= liftAmount; // liftAmount 만큼 y좌표 증가
+                vertices[i] = tempVector3;
+            }
+
+            for (int i = 1; i < cylinderDivision + 1; i++)
+            {
+                
+                for (int j = 0; j <= subdivisionAround; j++)
+                {
+                    vertices.RemoveAt(topThreshold - 1);
+                    
+                }
+            }
+
+            numberOfCylinder--;
+
+
+            //삼각형 계산
+            tempTriangles = CalculateTriangles(tempTriangles);
+
+            mesh.vertices = vertices.ToArray();
+            mesh.triangles = tempTriangles.ToArray();
+            mesh.RecalculateNormals(); // 노멀을 재계산하여 라이팅을 조정
+            meshFilter.mesh = mesh; // 메쉬 변경사항 적용
+
+            Vector3 newVector = Vector3.zero;
+            newVector.y += topOffest;
+            CreateBones(2, newVector);
+        }
+
+        else if (mode == 3)
+        {
+            botOffset -= liftAmount;
+            int botThreshold = mesh.vertexCount - ((subdivisionHeight / 2) + 1) * (subdivisionAround + 1); // 위쪽 반구의 시작점
+
+            for (int i = botThreshold; i < mesh.vertexCount; i++)
+            {
+                Vector3 tempVector3 = vertices[i];
+                tempVector3.y -= liftAmount; // liftAmount 만큼 y좌표 감소
+                vertices[i] = tempVector3;
+            }
+
+            for (int i = 1; i < cylinderDivision + 1; i++)
+            {
+                float y = Mathf.Lerp((height / 2) + botOffset, ((height / 2) + botOffset) - height, i / (float)cylinderDivision);
+                for (int j = 0; j <= subdivisionAround; j++)
+                {
+                    float theta = 2 * Mathf.PI * j / subdivisionAround;
+                    float x = radius * Mathf.Cos(theta);
+                    float z = radius * Mathf.Sin(theta);
+                    vertices.Insert(++botThreshold - 1, new Vector3(x, y, z));
+                }
+            }
+
+            numberOfCylinder++;
+
+
+            //삼각형 계산
+            tempTriangles = CalculateTriangles(tempTriangles);
+
+
+            mesh.vertices = vertices.ToArray();
+            mesh.triangles = tempTriangles.ToArray();
+            mesh.RecalculateNormals(); // 노멀을 재계산하여 라이팅을 조정
+            meshFilter.mesh = mesh; // 메쉬 변경사항 적용
+
+            Vector3 newVector = Vector3.zero;
+            newVector.y += botOffset;
+            CreateBones(3, newVector);
+        }
+       
+       
+    }
+
+    List<int> CalculateTriangles(List<int> tempTriangles)
+    {
         for (int i = 0; i < subdivisionHeight + (cylinderDivision * numberOfCylinder); i++)
         {
             for (int j = 0; j < subdivisionAround; j++)
@@ -94,14 +201,7 @@ public class ProceduralCapsule : MonoBehaviour
             }
         }
 
-        mesh.vertices = vertices.ToArray();
-        mesh.triangles = tempTriangles.ToArray();
-        mesh.RecalculateNormals(); // 노멀을 재계산하여 라이팅을 조정
-        meshFilter.mesh = mesh; // 메쉬 변경사항 적용
-
-        Vector3 newVector = Vector3.zero;
-        newVector.y += topOffest;
-        CreateBones(0, newVector);
+        return tempTriangles;
     }
 
     private Mesh CreateCapsuleMesh(int verticalSubdivisions, int horizontalSubdivisions, float radius, float height)
@@ -220,12 +320,24 @@ public class ProceduralCapsule : MonoBehaviour
         
 
         // 본 배열에 저장
-        if (mode == 2)
+        if (mode == 3)
         {
             listBones.Add(newBone.transform);
             listLocalBones.Add(newBone.transform.localPosition);
+            if (listBones.Count > 1)
+            {
+                AddHingeJoint(newBone);
+                newBone.GetComponent<HingeJoint>().connectedBody = bottomBone.GetComponent<Rigidbody>();
+
+                bottomBone = newBone;
+            }
+            else
+            {
+                topBone = newBone;
+                bottomBone = newBone;
+            }
         }
-        else
+        else if(mode == 1)
         {
             listBones.Insert(0, newBone.transform);
             listLocalBones.Insert(0, newBone.transform.localPosition);
@@ -254,8 +366,11 @@ public class ProceduralCapsule : MonoBehaviour
 
     void SetupSkinnedMeshRenderer(Transform[] bones)
     {
-
+        topArrow.transform.parent = topBone.transform;
+        topArrow.transform.localPosition = new Vector3(0, 0, -2);
+        bottomArrow.transform.parent = bottomBone.transform;
         
+
         sRenderer.bones = bones;
         sRenderer.sharedMesh = meshFilter.mesh;
         UpdateMeshCollider();

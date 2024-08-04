@@ -356,6 +356,7 @@
 "Assets/BodyCreate/BodyClick.cs"
 "Assets/BodyCreate/Dragable.cs"
 "Assets/BodyCreate/ProceduralCapsule.cs"
+"Assets/Script/Arrow.cs"
 "Assets/Script/BiomeAttributes.cs"
 "Assets/Script/Chunk.cs"
 "Assets/Script/CreateBody.cs"
