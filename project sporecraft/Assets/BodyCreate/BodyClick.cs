@@ -31,6 +31,7 @@ public class BodyClick : MonoBehaviour
                 {
                     isBoneClicked = true;
                     targetObject = hit.collider.gameObject;
+
                     zCoord = mainCamera.WorldToScreenPoint(targetObject.transform.position).z;
                     offset = targetObject.transform.position - GetMouseWorldPos();
                     return;

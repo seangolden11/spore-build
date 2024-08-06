@@ -41,6 +41,7 @@ public class ProceduralCapsule : MonoBehaviour
         listBones = new List<Transform>();
         listLocalBones = new List<Vector3>();
         CreateBones(1,Vector3.zero);
+        sRenderer.enabled = false;
         
 
     }
@@ -97,6 +98,7 @@ public class ProceduralCapsule : MonoBehaviour
 
             Vector3 newVector = Vector3.zero;
             newVector.y += topOffest;
+            topArrow.transform.localPosition += new Vector3(0, liftAmount,0);
             CreateBones(1, newVector);
         }
 
@@ -296,27 +298,40 @@ public class ProceduralCapsule : MonoBehaviour
     void CreateBones(int mode,Vector3 bonePos)
     {
         GameObject newBone = new GameObject("Bone" + numberOfCylinder); //본추가
+        GameObject newBoneMesh = new GameObject("BoneMesh" + numberOfCylinder);
+
+        newBoneMesh.AddComponent<MeshFilter>().mesh = Resources.GetBuiltinResource<Mesh>("Cylinder.fbx");
+        newBoneMesh.AddComponent<MeshRenderer>().material = new Material(Shader.Find("Standard"));
+        newBoneMesh.GetComponent<MeshRenderer>().sortingOrder = 1;
         
+
         CapsuleCollider newBoneCollider = newBone.AddComponent<CapsuleCollider>();
         newBoneCollider.isTrigger = true;
         
         newBone.layer = LayerMask.NameToLayer("Bone Layer");
+        
 
         // Rigidbody 추가
         Rigidbody rb = newBone.AddComponent<Rigidbody>();
         rb.drag = float.PositiveInfinity;
         rb.useGravity = false;
         rb.isKinematic = false;
-        rb.constraints |= RigidbodyConstraints.FreezePositionX;
+        //rb.constraints |= RigidbodyConstraints.FreezePositionX;
         //rb.constraints |= RigidbodyConstraints.FreezeRotationX;
 
 
         newBone.transform.parent = transform; //부모설정
 
-        
-
-        
         newBone.transform.localPosition = bonePos;
+        newBone.transform.rotation = transform.rotation;
+
+
+        newBoneMesh.transform.parent = newBone.transform;
+        newBoneMesh.transform.localScale = new Vector3(0.5f, 0.5f, 0.5f);
+        
+        newBoneMesh.transform.localPosition = Vector3.zero;
+        newBoneMesh.transform.rotation = transform.rotation;
+        
         
 
         // 본 배열에 저장
@@ -341,21 +356,30 @@ public class ProceduralCapsule : MonoBehaviour
         {
             listBones.Insert(0, newBone.transform);
             listLocalBones.Insert(0, newBone.transform.localPosition);
+            
             if (listBones.Count > 1)
             {
                 AddHingeJoint(topBone);
                 topBone.GetComponent<HingeJoint>().connectedBody = rb;
-                
+
                 topBone = newBone;
+
+
             }
             else
             {
                 topBone = newBone;
                 bottomBone = newBone;
+                
             }
+            
+            
+
         }
 
-
+        //topArrow.transform.parent = topBone.transform;
+        //topArrow.transform.localPosition = new Vector3(0,3,0);
+        //bottomArrow.transform.parent = bottomBone.transform;
         
 
 
@@ -366,14 +390,12 @@ public class ProceduralCapsule : MonoBehaviour
 
     void SetupSkinnedMeshRenderer(Transform[] bones)
     {
-        topArrow.transform.parent = topBone.transform;
-        topArrow.transform.localPosition = new Vector3(0, 0, -2);
-        bottomArrow.transform.parent = bottomBone.transform;
         
+
 
         sRenderer.bones = bones;
         sRenderer.sharedMesh = meshFilter.mesh;
-        UpdateMeshCollider();
+        
 
         // 바인드 포즈 설정
         Matrix4x4[] bindPoses = new Matrix4x4[bones.Length];
@@ -382,6 +404,8 @@ public class ProceduralCapsule : MonoBehaviour
             bindPoses[i] = bones[i].worldToLocalMatrix * transform.localToWorldMatrix;
         }
         sRenderer.sharedMesh.bindposes = bindPoses;
+
+        UpdateMeshCollider();
 
         // 가중치 할당
         //AssignBoneWeights(sRenderer.sharedMesh, bones.Length);

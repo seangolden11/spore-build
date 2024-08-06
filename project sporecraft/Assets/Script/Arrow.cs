@@ -93,4 +93,22 @@ public class Arrow : MonoBehaviour
         mousePoint.z = zCoord; // 저장한 Z좌표를 사용
         return mainCamera.ScreenToWorldPoint(mousePoint);
     }
+
+    private void FixedUpdate()
+    {
+
+        if(topOrBottom == 1)
+        {
+            if(pC.topBone != null)
+            {
+
+                transform.position = pC.topBone.transform.position + (2 * pC.topBone.transform.TransformDirection(Vector3.up));
+                transform.rotation = pC.topBone.transform.rotation;
+            }
+        }
+        else if (topOrBottom == 2)
+        {
+
+        }
+    }
 }
