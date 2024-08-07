@@ -1,6 +1,9 @@
 using System.Collections.Generic;
+using Unity.VisualScripting;
 using UnityEngine;
+using UnityEngine.UIElements;
 using UnityEngine.XR;
+using UnityEngine.XR.WSA;
 
 public class ProceduralCapsule : MonoBehaviour
 {
@@ -24,10 +27,11 @@ public class ProceduralCapsule : MonoBehaviour
     int weightrange = 4;
     MeshCollider mc;
     Mesh bakedMesh;
-    
 
-    List<Transform> listBones;
-    List<Vector3> listLocalBones;
+
+    public List<Transform> tempTrans;
+    public List<Transform> listBones;
+    public List<Vector3> listLocalBones;
 
     private void Start()
     {
@@ -48,8 +52,10 @@ public class ProceduralCapsule : MonoBehaviour
 
     public void UpdateMeshCollider()
     {
-        sRenderer.BakeMesh(bakedMesh);
-        mc.sharedMesh = bakedMesh;
+        
+        //sRenderer.BakeMesh(bakedMesh);
+        //mc.sharedMesh = bakedMesh;
+        
     }
 
     public void AppendCapsule(int mode)
@@ -98,7 +104,7 @@ public class ProceduralCapsule : MonoBehaviour
 
             Vector3 newVector = Vector3.zero;
             newVector.y += topOffest;
-            topArrow.transform.localPosition += new Vector3(0, liftAmount,0);
+            
             CreateBones(1, newVector);
         }
 
@@ -110,7 +116,7 @@ public class ProceduralCapsule : MonoBehaviour
             for (int i = 0; i < topThreshold; i++)
             {
                 Vector3 tempVector3 = vertices[i];
-                tempVector3.y -= liftAmount; // liftAmount 만큼 y좌표 증가
+                tempVector3.y -= liftAmount; // liftAmount 만큼 y좌표 감소
                 vertices[i] = tempVector3;
             }
 
@@ -119,7 +125,7 @@ public class ProceduralCapsule : MonoBehaviour
                 
                 for (int j = 0; j <= subdivisionAround; j++)
                 {
-                    vertices.RemoveAt(topThreshold - 1);
+                    vertices.RemoveAt(topThreshold);
                     
                 }
             }
@@ -129,15 +135,14 @@ public class ProceduralCapsule : MonoBehaviour
 
             //삼각형 계산
             tempTriangles = CalculateTriangles(tempTriangles);
-
-            mesh.vertices = vertices.ToArray();
             mesh.triangles = tempTriangles.ToArray();
+            mesh.vertices = vertices.ToArray();
+            
             mesh.RecalculateNormals(); // 노멀을 재계산하여 라이팅을 조정
             meshFilter.mesh = mesh; // 메쉬 변경사항 적용
 
-            Vector3 newVector = Vector3.zero;
-            newVector.y += topOffest;
-            CreateBones(2, newVector);
+            
+            RemoveBones(2);
         }
 
         else if (mode == 3)
@@ -294,92 +299,108 @@ public class ProceduralCapsule : MonoBehaviour
         return mesh;
     }
 
+    void RemoveBones(int mode)
+    {
+        Destroy(topBone.gameObject);
+        topBone = listBones[1].gameObject;
+        Destroy(topBone.GetComponent<HingeJoint>());
+        listBones.RemoveAt(0);
+        listLocalBones.RemoveAt(0);
+        tempTrans.RemoveAt(0);
+
+        SetupSkinnedMeshRenderer(listBones.ToArray());
+    }
 
     void CreateBones(int mode,Vector3 bonePos)
     {
-        GameObject newBone = new GameObject("Bone" + numberOfCylinder); //본추가
-        GameObject newBoneMesh = new GameObject("BoneMesh" + numberOfCylinder);
-
-        newBoneMesh.AddComponent<MeshFilter>().mesh = Resources.GetBuiltinResource<Mesh>("Cylinder.fbx");
-        newBoneMesh.AddComponent<MeshRenderer>().material = new Material(Shader.Find("Standard"));
-        newBoneMesh.GetComponent<MeshRenderer>().sortingOrder = 1;
-        
-
-        CapsuleCollider newBoneCollider = newBone.AddComponent<CapsuleCollider>();
-        newBoneCollider.isTrigger = true;
-        
-        newBone.layer = LayerMask.NameToLayer("Bone Layer");
-        
-
-        // Rigidbody 추가
-        Rigidbody rb = newBone.AddComponent<Rigidbody>();
-        rb.drag = float.PositiveInfinity;
-        rb.useGravity = false;
-        rb.isKinematic = false;
-        //rb.constraints |= RigidbodyConstraints.FreezePositionX;
-        //rb.constraints |= RigidbodyConstraints.FreezeRotationX;
-
-
-        newBone.transform.parent = transform; //부모설정
-
-        newBone.transform.localPosition = bonePos;
-        newBone.transform.rotation = transform.rotation;
-
-
-        newBoneMesh.transform.parent = newBone.transform;
-        newBoneMesh.transform.localScale = new Vector3(0.5f, 0.5f, 0.5f);
-        
-        newBoneMesh.transform.localPosition = Vector3.zero;
-        newBoneMesh.transform.rotation = transform.rotation;
-        
-        
-
-        // 본 배열에 저장
-        if (mode == 3)
+        if (mode == 1 || mode == 3)
         {
-            listBones.Add(newBone.transform);
-            listLocalBones.Add(newBone.transform.localPosition);
-            if (listBones.Count > 1)
-            {
-                AddHingeJoint(newBone);
-                newBone.GetComponent<HingeJoint>().connectedBody = bottomBone.GetComponent<Rigidbody>();
+            GameObject newBone = new GameObject("Bone" + numberOfCylinder); //본추가
+            GameObject newBoneMesh = new GameObject("BoneMesh" + numberOfCylinder);
+            GameObject ts = new GameObject("bonepoint" + numberOfCylinder);
 
-                bottomBone = newBone;
+            newBoneMesh.AddComponent<MeshFilter>().mesh = Resources.GetBuiltinResource<Mesh>("Cylinder.fbx");
+            newBoneMesh.AddComponent<MeshRenderer>().material = new Material(Shader.Find("Standard"));
+            newBoneMesh.GetComponent<MeshRenderer>().sortingOrder = 1;
+
+
+            CapsuleCollider newBoneCollider = newBone.AddComponent<CapsuleCollider>();
+            newBoneCollider.isTrigger = true;
+
+            newBone.layer = LayerMask.NameToLayer("Bone Layer");
+
+
+            // Rigidbody 추가
+            Rigidbody rb = newBone.AddComponent<Rigidbody>();
+            rb.drag = float.PositiveInfinity;
+            rb.useGravity = false;
+            rb.isKinematic = false;
+            //rb.constraints |= RigidbodyConstraints.FreezePositionX;
+            //rb.constraints |= RigidbodyConstraints.FreezeRotationX;
+
+
+            newBone.transform.parent = transform; //부모설정
+            ts.transform.parent = transform;
+
+            newBone.transform.localPosition = bonePos;
+            ts.transform.localPosition = bonePos;
+            newBone.transform.rotation = transform.rotation;
+            ts.transform.rotation = transform.rotation;
+
+
+            newBoneMesh.transform.parent = newBone.transform;
+            newBoneMesh.transform.localScale = new Vector3(0.5f, 0.5f, 0.5f);
+
+            newBoneMesh.transform.localPosition = Vector3.zero;
+            newBoneMesh.transform.rotation = transform.rotation;
+
+            if (mode == 3)
+            {
+                listBones.Add(newBone.transform);
+                listLocalBones.Add(newBone.transform.localPosition);
+                if (listBones.Count > 1)
+                {
+                    AddHingeJoint(newBone);
+                    newBone.GetComponent<HingeJoint>().connectedBody = bottomBone.GetComponent<Rigidbody>();
+
+                    bottomBone = newBone;
+                }
+                else
+                {
+                    topBone = newBone;
+                    bottomBone = newBone;
+                }
             }
-            else
+            else if (mode == 1)
             {
-                topBone = newBone;
-                bottomBone = newBone;
-            }
-        }
-        else if(mode == 1)
-        {
-            listBones.Insert(0, newBone.transform);
-            listLocalBones.Insert(0, newBone.transform.localPosition);
-            
-            if (listBones.Count > 1)
-            {
-                AddHingeJoint(topBone);
-                topBone.GetComponent<HingeJoint>().connectedBody = rb;
-
-                topBone = newBone;
-
-
-            }
-            else
-            {
-                topBone = newBone;
-                bottomBone = newBone;
                 
-            }
-            
-            
+                listBones.Insert(0, newBone.transform);
+                tempTrans.Insert(0, ts.transform);
+                listLocalBones.Insert(0, newBone.transform.localPosition);
 
+                if (listBones.Count > 1)
+                {
+                    AddHingeJoint(topBone);
+                    topBone.GetComponent<HingeJoint>().connectedBody = rb;
+
+                    
+                    topBone = newBone;
+                     
+
+                }
+                else
+                {
+                    topBone = newBone;
+                    bottomBone = newBone;
+
+                }
+
+
+
+            }
         }
 
-        //topArrow.transform.parent = topBone.transform;
-        //topArrow.transform.localPosition = new Vector3(0,3,0);
-        //bottomArrow.transform.parent = bottomBone.transform;
+        
         
 
 
@@ -395,17 +416,18 @@ public class ProceduralCapsule : MonoBehaviour
 
         sRenderer.bones = bones;
         sRenderer.sharedMesh = meshFilter.mesh;
-        
-
         // 바인드 포즈 설정
         Matrix4x4[] bindPoses = new Matrix4x4[bones.Length];
+        
         for (int i = 0; i < bones.Length; i++)
         {
-            bindPoses[i] = bones[i].worldToLocalMatrix * transform.localToWorldMatrix;
+            
+            bindPoses[i] = tempTrans[i].worldToLocalMatrix * transform.localToWorldMatrix;
+            
         }
         sRenderer.sharedMesh.bindposes = bindPoses;
 
-        UpdateMeshCollider();
+       
 
         // 가중치 할당
         //AssignBoneWeights(sRenderer.sharedMesh, bones.Length);
@@ -588,6 +610,10 @@ public class ProceduralCapsule : MonoBehaviour
 
 
         mesh.boneWeights = weights;
+        UpdateMeshCollider();
+
+       
+        
     }
 
     }

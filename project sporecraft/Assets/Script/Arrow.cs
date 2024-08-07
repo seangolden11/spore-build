@@ -60,9 +60,25 @@ public class Arrow : MonoBehaviour
         // 드래그 거리가 기준을 넘었는지 확인
         if (dragDistance >= requiredDragDistance)
         {
+            Vector3 dragDir = dragStartPosition - currentMousePosition;
+            if(Mathf.Abs(dragDir.x) > Mathf.Abs(dragDir.y))
+            {
+                if (topOrBottom == 1)
+                {
+                    if (dragDir.x > 0)
+                    {
+                        pC.AppendCapsule(1);
+                    }
+                    else
+                    {
+                        pC.AppendCapsule(2);
+                        Debug.Log("delecap");
+                       
+                    }
+                }
+            }
             
             
-            pC.AppendCapsule(1);
             
             dragStartPosition = currentMousePosition;
             Debug.Log("Dragged enough on " + gameObject.name);
@@ -108,7 +124,12 @@ public class Arrow : MonoBehaviour
         }
         else if (topOrBottom == 2)
         {
+            if (pC.bottomBone != null)
+            {
 
+                transform.position = pC.bottomBone.transform.position + (2 * pC.topBone.transform.TransformDirection(Vector3.down));
+                transform.rotation = pC.bottomBone.transform.rotation;
+            }
         }
     }
 }
