@@ -53,8 +53,8 @@ public class ProceduralCapsule : MonoBehaviour
     public void UpdateMeshCollider()
     {
         
-        //sRenderer.BakeMesh(bakedMesh);
-        //mc.sharedMesh = bakedMesh;
+        sRenderer.BakeMesh(bakedMesh);
+        mc.sharedMesh = bakedMesh;
         
     }
 
@@ -185,8 +185,44 @@ public class ProceduralCapsule : MonoBehaviour
             newVector.y += botOffset;
             CreateBones(3, newVector);
         }
-       
-       
+
+        else if (mode == 4 && numberOfCylinder > 1)
+        {
+            botOffset += liftAmount;
+            int botThreshold = mesh.vertexCount - ((subdivisionHeight / 2) + 1) * (subdivisionAround + 1); // 위쪽 반구의 시작점
+            int threshold = ((subdivisionHeight / 2) + 1) * (subdivisionAround + 1);
+
+            for (int i = botThreshold; i < mesh.vertexCount; i++)
+            {
+                Vector3 tempVector3 = vertices[i];
+                tempVector3.y += liftAmount; // liftAmount 만큼 y좌표 감소
+                vertices[i] = tempVector3;
+            }
+
+            for (int i = 1; i < cylinderDivision + 1; i++)
+            {
+
+                for (int j = 0; j <= subdivisionAround; j++)
+                {
+                    vertices.RemoveAt(botThreshold - threshold);
+
+                }
+            }
+
+            numberOfCylinder--;
+
+
+            //삼각형 계산
+            tempTriangles = CalculateTriangles(tempTriangles);
+            mesh.triangles = tempTriangles.ToArray();
+            mesh.vertices = vertices.ToArray();
+
+            mesh.RecalculateNormals(); // 노멀을 재계산하여 라이팅을 조정
+            meshFilter.mesh = mesh; // 메쉬 변경사항 적용
+
+
+            RemoveBones(4);
+        }
     }
 
     List<int> CalculateTriangles(List<int> tempTriangles)
@@ -301,12 +337,28 @@ public class ProceduralCapsule : MonoBehaviour
 
     void RemoveBones(int mode)
     {
-        Destroy(topBone.gameObject);
-        topBone = listBones[1].gameObject;
-        Destroy(topBone.GetComponent<HingeJoint>());
-        listBones.RemoveAt(0);
-        listLocalBones.RemoveAt(0);
-        tempTrans.RemoveAt(0);
+        int index =0;
+        if (mode == 2)
+        {
+            Destroy(topBone.gameObject);
+            topBone = listBones[1].gameObject;
+            Destroy(topBone.GetComponent<HingeJoint>());
+            index = 0;
+        }
+        else if(mode == 4)
+        {
+            Destroy(bottomBone.gameObject);
+            bottomBone = listBones[listBones.Count-2].gameObject;
+            index =  listBones.Count-1;
+
+        }
+
+
+
+
+        listBones.RemoveAt(index);
+        listLocalBones.RemoveAt(index);
+        tempTrans.RemoveAt(index);
 
         SetupSkinnedMeshRenderer(listBones.ToArray());
     }
@@ -358,9 +410,13 @@ public class ProceduralCapsule : MonoBehaviour
             {
                 listBones.Add(newBone.transform);
                 listLocalBones.Add(newBone.transform.localPosition);
+                tempTrans.Add(ts.transform);
                 if (listBones.Count > 1)
                 {
                     AddHingeJoint(newBone);
+
+                    newBone.transform.position = bottomBone.transform.position + (2 * bottomBone.transform.TransformDirection(Vector3.down));
+                    newBone.transform.rotation = bottomBone.transform.rotation;
                     newBone.GetComponent<HingeJoint>().connectedBody = bottomBone.GetComponent<Rigidbody>();
 
                     bottomBone = newBone;
@@ -381,9 +437,11 @@ public class ProceduralCapsule : MonoBehaviour
                 if (listBones.Count > 1)
                 {
                     AddHingeJoint(topBone);
-                    topBone.GetComponent<HingeJoint>().connectedBody = rb;
-
                     
+
+                    newBone.transform.position =  topBone.transform.position + (2*topBone.transform.TransformDirection(Vector3.up));
+                    newBone.transform.rotation = topBone.transform.rotation;
+                    topBone.GetComponent<HingeJoint>().connectedBody = rb;
                     topBone = newBone;
                      
 

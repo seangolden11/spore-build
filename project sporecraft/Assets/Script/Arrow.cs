@@ -72,8 +72,18 @@ public class Arrow : MonoBehaviour
                     else
                     {
                         pC.AppendCapsule(2);
-                        Debug.Log("delecap");
                        
+                    }
+                }
+                else if(topOrBottom == 2)
+                {
+                    if(dragDir.x < 0)
+                    {
+                        pC.AppendCapsule(3);
+                    }
+                    else
+                    {
+                        pC.AppendCapsule(4);
                     }
                 }
             }
@@ -118,7 +128,7 @@ public class Arrow : MonoBehaviour
             if(pC.topBone != null)
             {
 
-                transform.position = pC.topBone.transform.position + (2 * pC.topBone.transform.TransformDirection(Vector3.up));
+                transform.position = pC.topBone.transform.position + (3 * pC.topBone.transform.TransformDirection(Vector3.up));
                 transform.rotation = pC.topBone.transform.rotation;
             }
         }
@@ -127,8 +137,8 @@ public class Arrow : MonoBehaviour
             if (pC.bottomBone != null)
             {
 
-                transform.position = pC.bottomBone.transform.position + (2 * pC.topBone.transform.TransformDirection(Vector3.down));
-                transform.rotation = pC.bottomBone.transform.rotation;
+                transform.position = pC.bottomBone.transform.position + (3 * pC.bottomBone.transform.TransformDirection(Vector3.down));
+                transform.rotation = pC.bottomBone.transform.rotation * Quaternion.Euler(0,0,180);
             }
         }
     }
