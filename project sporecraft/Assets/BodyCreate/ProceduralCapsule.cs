@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Linq;
 using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.Rendering;
@@ -20,14 +21,16 @@ public class ProceduralCapsule : MonoBehaviour
     public GameObject bottomArrow;
 
     private List<Vector3> vertices;
+    
     private List<int> triangles;
     MeshFilter meshFilter;
-    SkinnedMeshRenderer sRenderer;
+    public SkinnedMeshRenderer sRenderer;
     public GameObject topBone;
     public GameObject bottomBone;
     int weightrange = 4;
     MeshCollider mc;
     Mesh bakedMesh;
+    int threshold;
 
 
     public List<Transform> tempTrans;
@@ -38,15 +41,16 @@ public class ProceduralCapsule : MonoBehaviour
     {
         meshFilter = gameObject.AddComponent<MeshFilter>();
         meshFilter.mesh = CreateCapsuleMesh(subdivisionHeight, subdivisionAround, radius, height);
-        sRenderer = gameObject.AddComponent<SkinnedMeshRenderer>();
+        sRenderer = gameObject.GetComponent<SkinnedMeshRenderer>();
         sRenderer.material = new Material(Shader.Find("Standard"));
-        //sRenderer.material.renderQueue = 3000;
         mc = GetComponent<MeshCollider>();
         bakedMesh = new Mesh();
         UpdateMeshCollider();
         listBones = new List<Transform>();
         listLocalBones = new List<Vector3>();
         CreateBones(1,Vector3.zero);
+        topArrow.SetActive(false);
+        bottomArrow.SetActive(false);
        
         
 
@@ -64,7 +68,7 @@ public class ProceduralCapsule : MonoBehaviour
     {
         int liftAmount = 2;
         Mesh mesh = meshFilter.mesh;
-        
+        threshold = ((subdivisionHeight / 2) + 1) * (subdivisionAround + 1);
         List<int> tempTriangles = new List<int>();
 
 
@@ -192,7 +196,7 @@ public class ProceduralCapsule : MonoBehaviour
         {
             botOffset += liftAmount;
             int botThreshold = mesh.vertexCount - ((subdivisionHeight / 2) + 1) * (subdivisionAround + 1); // 위쪽 반구의 시작점
-            int threshold = ((subdivisionHeight / 2) + 1) * (subdivisionAround + 1);
+            
 
             for (int i = botThreshold; i < mesh.vertexCount; i++)
             {
@@ -267,6 +271,7 @@ public class ProceduralCapsule : MonoBehaviour
                 float y = radius * Mathf.Cos(phi) + height / 2;
                 float z = radius * Mathf.Sin(phi) * Mathf.Sin(theta);
                 vertices.Add(new Vector3(x, y, z));
+                
                 
             }
         }
@@ -395,7 +400,7 @@ public class ProceduralCapsule : MonoBehaviour
             //rb.constraints |= RigidbodyConstraints.FreezeRotationX;
 
 
-            newBone.transform.parent = transform; //부모설정
+            newBone.transform.parent = sRenderer.rootBone; //부모설정
             ts.transform.parent = transform;
 
             newBone.transform.localPosition = bonePos;
@@ -409,6 +414,12 @@ public class ProceduralCapsule : MonoBehaviour
 
             newBoneMesh.transform.localPosition = Vector3.zero;
             newBoneMesh.transform.rotation = transform.rotation;
+
+            Bone  thenewbone= newBone.AddComponent<Bone>();
+            thenewbone.mainbody = this.gameObject;
+            
+
+            
 
             if (mode == 3)
             {
@@ -460,12 +471,14 @@ public class ProceduralCapsule : MonoBehaviour
 
 
             }
+           
+
         }
 
-        
-        
 
 
+
+        
         SetupSkinnedMeshRenderer(listBones.ToArray());
     }
 
@@ -617,7 +630,7 @@ public class ProceduralCapsule : MonoBehaviour
         int topThreshold = ((subdivisionHeight / 2) + 1) * (subdivisionAround + 1);
         int i;
 
-
+        AddBlendShape();
         for (i = 0; i < mesh.vertexCount;i++)
         {
 
@@ -646,21 +659,25 @@ public class ProceduralCapsule : MonoBehaviour
                     // BoneWeight 설정
                     weights[i].boneIndex0 = boneWeights[0].Key;
                     weights[i].weight0 = boneWeights[0].Value / totalWeight;
+                    
                     if (bones.Length > 1)
                     {
                         weights[i].boneIndex1 = boneWeights[1].Key;
                         weights[i].weight1 = boneWeights[1].Value / totalWeight;
-                    }
+                        
+            }
                     if (bones.Length > 2)
                     {
                         weights[i].boneIndex2 = boneWeights[2].Key;
                         weights[i].weight2 = boneWeights[2].Value / totalWeight;
-                    }
+                
+            }
                     if (bones.Length > 3)
                     {
                         weights[i].boneIndex3 = boneWeights[3].Key;
                         weights[i].weight3 = boneWeights[3].Value / totalWeight;
-                    }
+                
+            }
 
 
 
@@ -672,10 +689,105 @@ public class ProceduralCapsule : MonoBehaviour
 
 
         mesh.boneWeights = weights;
+        
         UpdateMeshCollider();
 
        
         
+    }
+
+    void AddBlendShape()
+    {
+        sRenderer.sharedMesh.ClearBlendShapes();
+        Vector3[] deltaVertices = new Vector3[vertices.Count];
+        Vector3 vertex;
+
+        for (int j = 0; j < listBones.Count; j++) {
+            deltaVertices = new Vector3[vertices.Count];
+            for (int i = 0; i < vertices.Count; i++)
+            {
+                vertex = vertices[i];
+                List<KeyValuePair<int, float>> blendWeights = new List<KeyValuePair<int, float>>();
+
+                for (int l = 0; l < listBones.Count; l++)
+                {
+                    float distance = Vector3.Distance(listLocalBones[l], vertex) - 1;
+                    distance = Mathf.Exp(-distance * 1);
+                    //distance = Mathf.Max(0, 1 - distance / 2);
+                    blendWeights.Add(new KeyValuePair<int, float>(l, distance)); // 거리가 가까울수록 높은 가중치
+                }
+
+                blendWeights.Sort((x, y) => y.Value.CompareTo(x.Value));
+
+                float totalWeight = 0.0f;
+                for (int l = 0; l < Mathf.Min(weightrange, blendWeights.Count); l++)
+                {
+                    totalWeight += blendWeights[l].Value;
+                }
+
+                if (blendWeights[0].Key == j)
+                {
+                    
+
+                    deltaVertices[i] = vertex;
+                    deltaVertices[i].x *= (blendWeights[0].Value/totalWeight);
+                    deltaVertices[i].y = 0;
+                    deltaVertices[i].z *= (blendWeights[0].Value / totalWeight);
+                }
+                else if(numberOfCylinder > 1)
+                {
+
+                    
+                    for (int z=1;z<numberOfCylinder;z++)
+                    {
+                        if (blendWeights[z].Key == j)
+                        {
+                            deltaVertices[i] = vertex;
+                            deltaVertices[i].x *= (blendWeights[z].Value / totalWeight);
+                            deltaVertices[i].y = 0;
+                            deltaVertices[i].z *= (blendWeights[z].Value / totalWeight);
+                            break;
+                        }
+                    }
+                }
+               
+
+                else
+                {
+                    deltaVertices[i] = Vector3.zero;
+                }
+            }
+            sRenderer.sharedMesh.AddBlendShapeFrame("blend" + j, 100, deltaVertices, null, null);
+        }
+
+        for(int i = 0; i < numberOfCylinder; i++)
+        {
+            sRenderer.SetBlendShapeWeight(i, 0);
+        }
+        
+
+        sRenderer.sharedMesh.RecalculateNormals();
+        sRenderer.sharedMesh.RecalculateTangents();
+    }
+
+    public void Cilcked()
+    {
+        topArrow.SetActive(true);
+        bottomArrow.SetActive(true);
+    }
+
+    public void otherCilceked()
+    {
+        bottomArrow.SetActive(false);
+        topArrow.SetActive(false);
+    }
+
+
+
+    public int returnboneint(Transform trans)
+    {
+        int num = listBones.FindIndex(trans.Equals);
+        return num;
     }
 
     }
