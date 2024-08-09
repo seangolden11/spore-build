@@ -1,36 +1,69 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 
 public class MoveCamera : MonoBehaviour
 {
-    public float speed = 0.1f;
-    // Start is called before the first frame update
+    public float movementSpeed = 10.0f; // 카메라 이동 속도
+    public float lookSpeed = 2.0f; // 마우스 회전 속도
+    public float sprintMultiplier = 2.0f; // Shift를 누를 때 이동 속도 배수
+    public bool isclicked =false;
+
+    private float yaw = 0.0f;
+    private float pitch = 0.0f;
+
     void Start()
     {
-        
+        // 시작할 때 마우스 커서를 잠금 상태로 설정
+        //Cursor.lockState = CursorLockMode.Locked;
     }
 
-    // Update is called once per frame
     void Update()
     {
-        if (Input.GetKey(KeyCode.W))
+        if (Input.GetMouseButtonUp(1))
         {
-            transform.position += new Vector3(0.0f, 0.0f, 1.0f)*speed;
+            if (!isclicked) {
+            isclicked = true;
+            }
+            else
+                isclicked = false;
+            
         }
-       
-        if (Input.GetKey(KeyCode.S))
+
+        if (!isclicked)
         {
-            transform.position -= new Vector3(0.0f, 0.0f, 1.0f)*speed;
+            // 마우스 이동에 따른 카메라 회전
+            yaw += lookSpeed * Input.GetAxis("Mouse X");
+            pitch -= lookSpeed * Input.GetAxis("Mouse Y");
+            pitch = Mathf.Clamp(pitch, -90f, 90f); // pitch 회전을 -90도에서 90도 사이로 제한
+
+            transform.eulerAngles = new Vector3(pitch, yaw, 0.0f);
         }
-        if (Input.GetKey(KeyCode.A))
+
+        // 카메라 이동
+        float currentSpeed = movementSpeed;
+        if (Input.GetKey(KeyCode.LeftShift) || Input.GetKey(KeyCode.RightShift))
         {
-            transform.position -= new Vector3(1.0f, 0.0f, 0.0f)*speed;
+            currentSpeed *= sprintMultiplier;
         }
-        if (Input.GetKey(KeyCode.D))
+
+        Vector3 forwardMovement = transform.forward * Input.GetAxis("Vertical") * currentSpeed * Time.deltaTime;
+        Vector3 strafeMovement = transform.right * Input.GetAxis("Horizontal") * currentSpeed * Time.deltaTime;
+
+        transform.position += forwardMovement + strafeMovement;
+
+        // 상승/하강 (Q와 E 키로)
+        if (Input.GetKey(KeyCode.Q))
         {
-            transform.position += new Vector3(1.0f, 0.0f, 0.0f)*speed;
+            transform.position += Vector3.down * currentSpeed * Time.deltaTime;
         }
-    
+        if (Input.GetKey(KeyCode.E))
+        {
+            transform.position += Vector3.up * currentSpeed * Time.deltaTime;
+        }
+
+        // Esc를 누르면 마우스 커서가 해제됨
+        if (Input.GetKeyDown(KeyCode.Escape))
+        {
+            Cursor.lockState = CursorLockMode.None;
+        }
     }
 }

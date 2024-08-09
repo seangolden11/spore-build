@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using Unity.VisualScripting;
 using UnityEngine;
+using UnityEngine.Rendering;
 using UnityEngine.UIElements;
 using UnityEngine.XR;
 using UnityEngine.XR.WSA;
@@ -39,13 +40,14 @@ public class ProceduralCapsule : MonoBehaviour
         meshFilter.mesh = CreateCapsuleMesh(subdivisionHeight, subdivisionAround, radius, height);
         sRenderer = gameObject.AddComponent<SkinnedMeshRenderer>();
         sRenderer.material = new Material(Shader.Find("Standard"));
+        //sRenderer.material.renderQueue = 3000;
         mc = GetComponent<MeshCollider>();
         bakedMesh = new Mesh();
         UpdateMeshCollider();
         listBones = new List<Transform>();
         listLocalBones = new List<Vector3>();
         CreateBones(1,Vector3.zero);
-        sRenderer.enabled = false;
+       
         
 
     }
@@ -358,6 +360,7 @@ public class ProceduralCapsule : MonoBehaviour
 
         listBones.RemoveAt(index);
         listLocalBones.RemoveAt(index);
+        Destroy(tempTrans[index].gameObject);
         tempTrans.RemoveAt(index);
 
         SetupSkinnedMeshRenderer(listBones.ToArray());
@@ -373,13 +376,14 @@ public class ProceduralCapsule : MonoBehaviour
 
             newBoneMesh.AddComponent<MeshFilter>().mesh = Resources.GetBuiltinResource<Mesh>("Cylinder.fbx");
             newBoneMesh.AddComponent<MeshRenderer>().material = new Material(Shader.Find("Standard"));
-            newBoneMesh.GetComponent<MeshRenderer>().sortingOrder = 1;
+            //newBoneMesh.GetComponent<MeshRenderer>();
 
 
             CapsuleCollider newBoneCollider = newBone.AddComponent<CapsuleCollider>();
             newBoneCollider.isTrigger = true;
 
             newBone.layer = LayerMask.NameToLayer("Bone Layer");
+            newBoneMesh.layer = LayerMask.NameToLayer("Bone Mesh Layer");
 
 
             // Rigidbody Ãß°¡

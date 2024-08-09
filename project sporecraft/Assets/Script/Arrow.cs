@@ -9,6 +9,7 @@ public class Arrow : MonoBehaviour
     int topOrBottom = 0;
     public float requiredDragDistance = 100.0f; // 드래그 해야하는 최소 거리 (스크린 좌표계 기준)
     private Camera mainCamera;
+    public Transform cameraTrans;
     private float zCoord;
 
     private Vector3 dragStartPosition;
@@ -55,35 +56,67 @@ public class Arrow : MonoBehaviour
         Vector3 currentMousePosition = Input.mousePosition;
         float dragDistance = Vector3.Distance(dragStartPosition, currentMousePosition);
 
-        Debug.Log("Current Drag Distance: " + dragDistance);
+        //Debug.Log("Current Drag Distance: " + dragDistance);
 
         // 드래그 거리가 기준을 넘었는지 확인
         if (dragDistance >= requiredDragDistance)
         {
             Vector3 dragDir = dragStartPosition - currentMousePosition;
+            
             if(Mathf.Abs(dragDir.x) > Mathf.Abs(dragDir.y))
             {
-                if (topOrBottom == 1)
+                if (cameraTrans.rotation.eulerAngles.y > 180)
                 {
-                    if (dragDir.x > 0)
+                    if (topOrBottom == 1)
                     {
-                        pC.AppendCapsule(1);
+                        if (dragDir.x > 0)
+                        {
+                            pC.AppendCapsule(1);
+                            
+                        }
+                        else
+                        {
+                            pC.AppendCapsule(2);
+
+                        }
                     }
-                    else
+                    else if (topOrBottom == 2)
                     {
-                        pC.AppendCapsule(2);
-                       
+                        if (dragDir.x < 0)
+                        {
+                            pC.AppendCapsule(3);
+                        }
+                        else
+                        {
+                            pC.AppendCapsule(4);
+                        }
                     }
                 }
-                else if(topOrBottom == 2)
+                else
                 {
-                    if(dragDir.x < 0)
+                    if (topOrBottom == 1)
                     {
-                        pC.AppendCapsule(3);
+                        if (dragDir.x > 0)
+                        {
+                            pC.AppendCapsule(2);
+                        }
+                        else
+                        {
+                            pC.AppendCapsule(1);
+                            
+
+                        }
                     }
-                    else
+                    else if (topOrBottom == 2)
                     {
-                        pC.AppendCapsule(4);
+                        if (dragDir.x < 0)
+                        {
+                            pC.AppendCapsule(4);
+                        }
+                        else
+                        {
+                            pC.AppendCapsule(3);
+                        }
                     }
                 }
             }

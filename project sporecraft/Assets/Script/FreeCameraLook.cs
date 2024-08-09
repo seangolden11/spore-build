@@ -36,7 +36,7 @@ public class FreeCameraLook : Pivot
     // Update is called once per frame
     protected override void Update()
     {
-        base.Update();
+        //base.Update();
 
         HandleRotationMovement();
 
