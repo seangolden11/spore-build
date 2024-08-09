@@ -137,7 +137,7 @@ GameObject:
   - component: {fileID: 77293876}
   - component: {fileID: 77293877}
   - component: {fileID: 77293878}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: BottomArrow
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -362,7 +362,7 @@ Transform:
   m_GameObject: {fileID: 99715205}
   serializedVersion: 2
   m_LocalRotation: {x: 0.40821788, y: -0.23456968, z: 0.10938163, w: 0.8754261}
-  m_LocalPosition: {x: 0, y: 3, z: 0}
+  m_LocalPosition: {x: 0, y: 30, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -528,7 +528,7 @@ Canvas:
   m_GameObject: {fileID: 414203169}
   m_Enabled: 1
   serializedVersion: 3
-  m_RenderMode: 0
+  m_RenderMode: 1
   m_Camera: {fileID: 735502211}
   m_PlaneDistance: 100
   m_PixelPerfect: 0
@@ -1173,6 +1173,7 @@ GameObject:
   - component: {fileID: 830497232}
   - component: {fileID: 830497239}
   - component: {fileID: 830497240}
+  - component: {fileID: 830497241}
   m_Layer: 3
   m_Name: Capsule
   m_TagString: Untagged
@@ -1195,6 +1196,7 @@ Transform:
   m_Children:
   - {fileID: 2007351378}
   - {fileID: 77293873}
+  - {fileID: 1151482055}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: -90, y: 0, z: 0}
 --- !u!114 &830497239
@@ -1219,6 +1221,7 @@ MonoBehaviour:
   botOffset: 0
   topArrow: {fileID: 2007351377}
   bottomArrow: {fileID: 77293872}
+  sRenderer: {fileID: 0}
   topBone: {fileID: 0}
   bottomBone: {fileID: 0}
   tempTrans: []
@@ -1246,6 +1249,59 @@ MeshCollider:
   m_Convex: 0
   m_CookingOptions: 30
   m_Mesh: {fileID: 0}
+--- !u!137 &830497241
+SkinnedMeshRenderer:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 830497230}
+  m_Enabled: 1
+  m_CastShadows: 1
+  m_ReceiveShadows: 1
+  m_DynamicOccludee: 1
+  m_StaticShadowCaster: 0
+  m_MotionVectors: 1
+  m_LightProbeUsage: 1
+  m_ReflectionProbeUsage: 1
+  m_RayTracingMode: 3
+  m_RayTraceProcedural: 0
+  m_RenderingLayerMask: 1
+  m_RendererPriority: 0
+  m_Materials:
+  - {fileID: 0}
+  m_StaticBatchInfo:
+    firstSubMesh: 0
+    subMeshCount: 0
+  m_StaticBatchRoot: {fileID: 0}
+  m_ProbeAnchor: {fileID: 0}
+  m_LightProbeVolumeOverride: {fileID: 0}
+  m_ScaleInLightmap: 1
+  m_ReceiveGI: 1
+  m_PreserveUVs: 0
+  m_IgnoreNormalsForChartDetection: 0
+  m_ImportantGI: 0
+  m_StitchLightmapSeams: 1
+  m_SelectedEditorRenderState: 3
+  m_MinimumChartSize: 4
+  m_AutoUVMaxDistance: 0.5
+  m_AutoUVMaxAngle: 89
+  m_LightmapParameters: {fileID: 0}
+  m_SortingLayerID: 0
+  m_SortingLayer: 0
+  m_SortingOrder: 0
+  serializedVersion: 2
+  m_Quality: 0
+  m_UpdateWhenOffscreen: 0
+  m_SkinnedMotionVectors: 1
+  m_Mesh: {fileID: 0}
+  m_Bones: []
+  m_BlendShapeWeights: []
+  m_RootBone: {fileID: 1151482055}
+  m_AABB:
+    m_Center: {x: 0, y: 0, z: 0}
+    m_Extent: {x: 0, y: 0, z: 0}
+  m_DirtyAABB: 0
 --- !u!1 &925912326
 GameObject:
   m_ObjectHideFlags: 0
@@ -1278,6 +1334,37 @@ Transform:
   - {fileID: 735502212}
   - {fileID: 231344852}
   m_Father: {fileID: 795200097}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &1151482054
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1151482055}
+  m_Layer: 3
+  m_Name: root Bone
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1151482055
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1151482054}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 830497232}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1468461756
 GameObject:
@@ -1346,7 +1433,12 @@ MonoBehaviour:
   BoneLayer:
     serializedVersion: 2
     m_Bits: 64
+  ArrowLayer:
+    serializedVersion: 2
+    m_Bits: 256
+  lastObjectCilcked: {fileID: 0}
   MainBody: {fileID: 830497230}
+  isArrowClicked: 0
 --- !u!114 &1468461760
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1553,7 +1645,7 @@ GameObject:
   - component: {fileID: 2007351381}
   - component: {fileID: 2007351382}
   - component: {fileID: 2007351384}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: TopArrow
   m_TagString: Untagged
   m_Icon: {fileID: 0}
