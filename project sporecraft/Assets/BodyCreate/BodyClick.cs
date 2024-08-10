@@ -20,7 +20,7 @@ public class BodyClick : MonoBehaviour
     {
         mainCamera = Camera.main;
         PC = MainBody.GetComponent<ProceduralCapsule>();
-        targetObject = MainBody;
+        
     }
 
     void Update()
@@ -65,17 +65,7 @@ public class BodyClick : MonoBehaviour
                     return;
                 }
             }
-            foreach (RaycastHit hit in hits)
-            {
-                if (((1 << hit.collider.gameObject.layer) & ArrowLayer) != 0)
-                {
-                   
-                    isArrowClicked = true;
-                    
-
-                    return;
-                }
-            }
+            
             ClickOther();
             
 
@@ -105,6 +95,18 @@ public class BodyClick : MonoBehaviour
 
     void ClickOther()
     {
+        Debug.Log(targetObject);
+        if(targetObject == null)
+        {
+            isArrowClicked = false;
+            isbodyclicked = false;
+            
+            if(isBoneClicked)
+                lastObjectCilcked.GetComponent<Bone>().enabled = false;
+            isBoneClicked = false;
+            PC.otherCilceked();
+            return;
+        }
         if (isBoneClicked && targetObject.layer != BoneLayer)
         {
             lastObjectCilcked.GetComponent<Bone>().enabled = false;

@@ -31,6 +31,8 @@ public class ProceduralCapsule : MonoBehaviour
     MeshCollider mc;
     Mesh bakedMesh;
     int threshold;
+    Arrow toparrowSc;
+    Arrow botArrowSc;
 
 
     public List<Transform> tempTrans;
@@ -49,10 +51,13 @@ public class ProceduralCapsule : MonoBehaviour
         listBones = new List<Transform>();
         listLocalBones = new List<Vector3>();
         CreateBones(1,Vector3.zero);
+        
+        toparrowSc = topArrow.GetComponent<Arrow>();
+        botArrowSc = bottomArrow.GetComponent<Arrow>();
         topArrow.SetActive(false);
         bottomArrow.SetActive(false);
-       
-        
+
+
 
     }
 
@@ -778,6 +783,8 @@ public class ProceduralCapsule : MonoBehaviour
 
     public void otherCilceked()
     {
+        if (toparrowSc.isclicked || botArrowSc.isclicked)
+            return;
         bottomArrow.SetActive(false);
         topArrow.SetActive(false);
     }

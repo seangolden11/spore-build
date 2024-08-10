@@ -11,6 +11,7 @@ public class Arrow : MonoBehaviour
     private Camera mainCamera;
     public Transform cameraTrans;
     private float zCoord;
+    public bool isclicked;
 
     private Vector3 dragStartPosition;
     private bool isDragging = false;
@@ -42,11 +43,12 @@ public class Arrow : MonoBehaviour
     private void OnMouseDown()
     {
         if (mainCamera == null) return;
+        isclicked = true;
 
         zCoord = mainCamera.WorldToScreenPoint(gameObject.transform.position).z;
         dragStartPosition = Input.mousePosition;
         isDragging = true; // 드래그 시작
-        Debug.Log("Mouse down on " + gameObject.name);
+        
     }
 
     private void OnMouseDrag()
@@ -131,7 +133,8 @@ public class Arrow : MonoBehaviour
     private void OnMouseUp()
     {
         isDragging = false; // 마우스 버튼을 놓으면 드래그 종료
-        Debug.Log("Mouse up on " + gameObject.name);
+        isclicked = false;
+        
     }
 
     public void SetActiveTrue()
