@@ -10,7 +10,7 @@ public class AddMode : MonoBehaviour
     int partid;
     Transform nearbone;
     bool added;
-    public bool nullreturn;
+    
     
 
     void Start()
@@ -18,7 +18,7 @@ public class AddMode : MonoBehaviour
         mainCamera = Camera.main;
         addmode = false;
         added = false;
-        nullreturn = false;
+        
         //this.enabled = false;
         
     }
@@ -42,24 +42,24 @@ public class AddMode : MonoBehaviour
         }
         else
         {
-                // No hit, move freely with mouse
-            Vector3 mousePosition = new Vector3(Input.mousePosition.x, Input.mousePosition.y, offset.z);
-            Vector3 worldPosition = mainCamera.ScreenToWorldPoint(mousePosition);
-            currentObject.transform.position = worldPosition + offset;
+            FollowMouse();
+            
         }
 
         if (Input.GetMouseButtonDown(0))
         {
-            nearbone = currentObject.GetComponentInChildren<BodyPart>().FindNearestBone();
-            if(nullreturn)
+            if (!Physics.Raycast(ray, out hit))
             {
                 addmode = false;
                 CreateManager.instance.bodyClick.enabled = true;
                 added = false;
-                nullreturn = false;
+                
                 Destroy(currentObject);
                 return;
             }
+
+            nearbone = currentObject.GetComponentInChildren<BodyPart>().FindNearestBone();
+            
             currentObject.transform.parent = nearbone;
             added = true;
         }
@@ -69,7 +69,7 @@ public class AddMode : MonoBehaviour
             if (Input.GetKey(KeyCode.LeftControl))
             {
                 currentObject = Instantiate(CreateManager.instance.partManager.Parts[partid]);
-                offset = transform.position - mainCamera.ScreenToWorldPoint(new Vector3(Input.mousePosition.x, Input.mousePosition.y, mainCamera.WorldToScreenPoint(transform.position).z));
+                
             }
             else
             {
@@ -89,10 +89,25 @@ public class AddMode : MonoBehaviour
     {
         partid = partData.partId;
         currentObject = Instantiate(CreateManager.instance.partManager.Parts[partid]);
-        offset = transform.position - mainCamera.ScreenToWorldPoint(new Vector3(Input.mousePosition.x, Input.mousePosition.y, mainCamera.WorldToScreenPoint(transform.position).z));
+        CreateManager.instance.boneCamera.enabled = false;
         
+
         addmode = true;
         CreateManager.instance.bodyClick.enabled = false;
 
     }
+
+    void FollowMouse()
+    {
+        Vector3 mousePosition = Input.mousePosition;
+        mousePosition.z = 10; // 카메라로부터의 거리 설정
+
+        Vector3 targetPosition = mainCamera.ScreenToWorldPoint(mousePosition);
+
+        // 물체를 변환된 위치로 이동
+        currentObject.transform.position = targetPosition;
+        currentObject.transform.rotation = Quaternion.identity;
+    }
+
+
 }

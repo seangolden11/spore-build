@@ -1,4 +1,5 @@
 using UnityEngine;
+using UnityEngine.EventSystems;
 
 public class BodyClick : MonoBehaviour
 {
@@ -15,6 +16,9 @@ public class BodyClick : MonoBehaviour
     bool isBoneClicked;
     bool isbodyclicked;
     public bool isArrowClicked;
+    public GameObject partPanel;
+
+    
 
     void Start()
     {
@@ -25,7 +29,7 @@ public class BodyClick : MonoBehaviour
 
     void Update()
     {
-        if (Input.GetMouseButtonDown(0))
+        if (Input.GetMouseButtonDown(0) && !EventSystem.current.IsPointerOverGameObject())
         {
             Ray ray = mainCamera.ScreenPointToRay(Input.mousePosition);
             RaycastHit[] hits = Physics.RaycastAll(ray, Mathf.Infinity, BoneLayer | BodyLayer);
@@ -43,8 +47,10 @@ public class BodyClick : MonoBehaviour
                     offset = targetObject.transform.position - GetMouseWorldPos();
                     
                     ClickOther();
+                    PC.Cilcked();
                     isBoneClicked = true;
                     targetObject.GetComponent<Bone>().enabled = true;
+                    partPanel.SetActive(true);
                     return;
                 }
             }
@@ -58,7 +64,9 @@ public class BodyClick : MonoBehaviour
                     offset = targetObject.transform.position - GetMouseWorldPos();
                     
                     ClickOther();
+                    
                     isbodyclicked = true;
+                    partPanel.SetActive(true);
                     PC.Cilcked();
                     
                     
@@ -96,15 +104,18 @@ public class BodyClick : MonoBehaviour
     void ClickOther()
     {
         Debug.Log(targetObject);
+        if (EventSystem.current.IsPointerOverGameObject())
+            return;
         if(targetObject == null)
         {
-            isArrowClicked = false;
+            
             isbodyclicked = false;
             
             if(isBoneClicked)
                 lastObjectCilcked.GetComponent<Bone>().enabled = false;
             isBoneClicked = false;
             PC.otherCilceked();
+            partPanel.SetActive(false);
             return;
         }
         if (isBoneClicked && targetObject.layer != BoneLayer)
@@ -112,18 +123,15 @@ public class BodyClick : MonoBehaviour
             lastObjectCilcked.GetComponent<Bone>().enabled = false;
             isBoneClicked = false;
         }
-        if (isbodyclicked && targetObject.layer != BodyLayer)
+        if (isbodyclicked && targetObject.layer != BodyLayer && targetObject.layer != BoneLayer)
         {
-            if (!isArrowClicked)
-            {
+            
                 PC.otherCilceked();
+                
                 isbodyclicked = false;
-            }
+            
         }
-        if (isArrowClicked && targetObject.layer != ArrowLayer)
-        {
-            isArrowClicked = false;
-        }
+        
     }
 
     private Vector3 GetMouseWorldPos()

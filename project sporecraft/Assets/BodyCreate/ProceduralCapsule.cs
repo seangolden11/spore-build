@@ -33,6 +33,7 @@ public class ProceduralCapsule : MonoBehaviour
     int threshold;
     Arrow toparrowSc;
     Arrow botArrowSc;
+    public Camera boneCamera;
 
 
     public List<Transform> tempTrans;
@@ -777,6 +778,7 @@ public class ProceduralCapsule : MonoBehaviour
 
     public void Cilcked()
     {
+        boneCamera.enabled = true;
         topArrow.SetActive(true);
         bottomArrow.SetActive(true);
     }
@@ -785,6 +787,7 @@ public class ProceduralCapsule : MonoBehaviour
     {
         if (toparrowSc.isclicked || botArrowSc.isclicked)
             return;
+        boneCamera.enabled = false;
         bottomArrow.SetActive(false);
         topArrow.SetActive(false);
     }

@@ -575,7 +575,7 @@ GameObject:
   - component: {fileID: 532039917}
   - component: {fileID: 532039916}
   m_Layer: 5
-  m_Name: Panel
+  m_Name: Left Panel
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1215,6 +1215,7 @@ MonoBehaviour:
   sRenderer: {fileID: 0}
   topBone: {fileID: 0}
   bottomBone: {fileID: 0}
+  boneCamera: {fileID: 231344854}
   tempTrans: []
   listBones: []
   listLocalBones: []
@@ -1416,6 +1417,7 @@ MonoBehaviour:
   lastObjectCilcked: {fileID: 0}
   MainBody: {fileID: 830497230}
   isArrowClicked: 0
+  partPanel: {fileID: 532039914}
 --- !u!114 &1468461760
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1446,7 +1448,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 77beb64049c8daf4598612fc5b4fa6f4, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  nullreturn: 0
 --- !u!114 &1468461762
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1462,6 +1463,7 @@ MonoBehaviour:
   partManager: {fileID: 598461134}
   bodyClick: {fileID: 1468461759}
   addMode: {fileID: 1468461761}
+  boneCamera: {fileID: 231344854}
 --- !u!1 &1592270635
 GameObject:
   m_ObjectHideFlags: 0
@@ -1542,7 +1544,7 @@ GameObject:
   - component: {fileID: 1715005701}
   - component: {fileID: 1715005700}
   - component: {fileID: 1715005699}
-  m_Layer: 0
+  m_Layer: 2
   m_Name: Plane
   m_TagString: Untagged
   m_Icon: {fileID: 0}

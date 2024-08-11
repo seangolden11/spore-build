@@ -8,6 +8,7 @@ public class CreateManager : MonoBehaviour
     public PartManager partManager;
     public BodyClick bodyClick;
     public AddMode addMode;
+    public Camera boneCamera;
     private void Awake()
     {
         instance = this;

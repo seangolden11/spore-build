@@ -21,7 +21,7 @@ public class BodyPart : MonoBehaviour
         colliders = Physics.OverlapSphere(transform.position, radius, layer);
         if(colliders.Length == 0)
         {
-            CreateManager.instance.addMode.nullreturn = true;
+            
             
             return transform;
         }
