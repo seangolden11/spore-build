@@ -10,10 +10,12 @@ public class Bone : MonoBehaviour
     public float blendvalue;
     public float speed = 100f;
     ProceduralCapsule capsule;
+    List<BodyPart> childparts;
     // Start is called before the first frame update
 
     private void Start()
     {
+        childparts = new List<BodyPart>();
         blendvalue = 0f;
         capsule = mainbody.GetComponent<ProceduralCapsule>();
         this.enabled = false;
@@ -27,17 +29,30 @@ public class Bone : MonoBehaviour
             blendvalue += wheelinput * speed;
             bonenum = capsule.returnboneint(this.transform);
             capsule.sRenderer.SetBlendShapeWeight(bonenum, blendvalue);
+            ChildPartsTrans(blendvalue);
         }
         else if(wheelinput < 0 && blendvalue > 0)
         {
             blendvalue += wheelinput * speed;
             bonenum = capsule.returnboneint(this.transform);
             capsule.sRenderer.SetBlendShapeWeight(bonenum, blendvalue);
+            ChildPartsTrans(blendvalue);
         }
 
        
     }
 
-    
+    public void Fussioned(BodyPart temp)
+    {
+        childparts.Add(temp);
+    }
+
+    void ChildPartsTrans(float inputvalue)
+    {
+        for(int i = 0; i < childparts.Count; i++)
+        {
+            childparts[i].changed(inputvalue);
+        }
+    }
 
 }

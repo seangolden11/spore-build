@@ -9,6 +9,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 8101011627874571870}
+  - component: {fileID: 5452441318760475497}
   m_Layer: 0
   m_Name: eye1
   m_TagString: Untagged
@@ -26,12 +27,30 @@ Transform:
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_LocalScale: {x: 0.5, y: 0.5, z: 0.5}
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 2921607789034542797}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &5452441318760475497
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7686946887305345426}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9195eb391e856ea43b66eae6d0fdf0db, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  radius: 5
+  layer:
+    serializedVersion: 2
+    m_Bits: 64
+  colliders: []
+  short_bone: {fileID: 0}
 --- !u!1001 &3387018852399739174
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -87,34 +106,8 @@ PrefabInstance:
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
-    m_AddedComponents:
-    - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 11c226069d8afbc45810257f286b2bce, type: 3}
-      insertIndex: -1
-      addedObject: {fileID: 255669134266480125}
+    m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 11c226069d8afbc45810257f286b2bce, type: 3}
---- !u!1 &2576184754719902839 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 919132149155446097, guid: 11c226069d8afbc45810257f286b2bce, type: 3}
-  m_PrefabInstance: {fileID: 3387018852399739174}
-  m_PrefabAsset: {fileID: 0}
---- !u!114 &255669134266480125
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2576184754719902839}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 9195eb391e856ea43b66eae6d0fdf0db, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  radius: 5
-  layer:
-    serializedVersion: 2
-    m_Bits: 64
-  colliders: []
-  short_bone: {fileID: 0}
 --- !u!4 &2921607789034542797 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: -8679921383154817045, guid: 11c226069d8afbc45810257f286b2bce, type: 3}

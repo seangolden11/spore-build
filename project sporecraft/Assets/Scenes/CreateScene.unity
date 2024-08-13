@@ -1448,6 +1448,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 77beb64049c8daf4598612fc5b4fa6f4, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  rotationSimilarityThreshold: 20
 --- !u!114 &1468461762
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1464,6 +1465,7 @@ MonoBehaviour:
   bodyClick: {fileID: 1468461759}
   addMode: {fileID: 1468461761}
   boneCamera: {fileID: 231344854}
+  mainBody: {fileID: 830497230}
 --- !u!1 &1592270635
 GameObject:
   m_ObjectHideFlags: 0

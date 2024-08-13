@@ -4,13 +4,19 @@ using UnityEngine;
 
 public class BodyPart : MonoBehaviour
 {
-    public float radius = 0f;
+    public float radius;
     public LayerMask layer;
     public Collider[] colliders;
     public Collider short_bone;
+    public float deltaValue;
+    ProceduralCapsule capsule;
+    Vector3 fussionPos;
+    
+    
     private void Start()
     {
-        
+        radius = 5;
+        capsule = CreateManager.instance.mainBody.GetComponent<ProceduralCapsule>();
     }
     public Transform FindNearestBone()
     {
@@ -25,7 +31,7 @@ public class BodyPart : MonoBehaviour
             
             return transform;
         }
-            
+
 
         if (colliders.Length > 1)
         {
@@ -43,11 +49,59 @@ public class BodyPart : MonoBehaviour
             return short_bone.transform;
         }
         else
-            return colliders[0].transform;
+        {
+            short_bone = colliders[0];
+            return short_bone.transform;
+        }
 
 
 
         
+    }
+
+    public void Fussion()
+    {
+        fussionPos = transform.position;
+        List<Transform> listbones = capsule.listBones;
+        List<Vector3> listlocalbones = capsule.listLocalBones;
+           
+            
+         Vector3 vertex = transform.localPosition;
+
+           
+               
+               
+         List<KeyValuePair<int, float>> blendWeights = new List<KeyValuePair<int, float>>();
+
+         for (int l = 0; l < listbones.Count; l++)
+         {
+                        float distance = Vector3.Distance(listlocalbones[l], vertex) - 1;
+                        distance = Mathf.Exp(-distance * 1);
+                        //distance = Mathf.Max(0, 1 - distance / 2);
+                        blendWeights.Add(new KeyValuePair<int, float>(l, distance)); // 거리가 가까울수록 높은 가중치
+         }
+
+                    blendWeights.Sort((x, y) => y.Value.CompareTo(x.Value));
+
+                    float totalWeight = 0.0f;
+                    for (int l = 0; l < Mathf.Min(3, blendWeights.Count); l++)
+                    {
+                        totalWeight += blendWeights[l].Value;
+                    }
+
+                    
+
+
+                       
+           deltaValue = (blendWeights[0].Value / totalWeight);
+                    
+            
+
+    }
+
+    public void changed(float inputvalue)
+    {
+        //transform.position = vertextrans.position;
     }
 
 }

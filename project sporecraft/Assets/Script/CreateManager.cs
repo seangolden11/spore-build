@@ -9,6 +9,7 @@ public class CreateManager : MonoBehaviour
     public BodyClick bodyClick;
     public AddMode addMode;
     public Camera boneCamera;
+    public GameObject mainBody;
     private void Awake()
     {
         instance = this;
