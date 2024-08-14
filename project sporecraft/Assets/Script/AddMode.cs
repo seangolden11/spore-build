@@ -80,15 +80,13 @@ public class AddMode : MonoBehaviour
                 return;
             }
 
-            nearbone = currentObject.GetComponentInChildren<BodyPart>().FindNearestBone();
-
-            currentObject.transform.parent = nearbone.transform;
+            currentObject.GetComponent<BodyPart>().Fussion();
             
 
             if (!isRotationSim)
             {
 
-                mirroredObject.transform.parent = nearbone.transform;
+                mirroredObject.GetComponent<BodyPart>().Fussion();
                 
             }
             else

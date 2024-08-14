@@ -61,7 +61,11 @@ public class BodyPart : MonoBehaviour
 
     public void Fussion()
     {
-        fussionPos = transform.position;
+        if (short_bone == null)
+            FindNearestBone();
+        transform.parent = short_bone.transform;
+        short_bone.GetComponent<Bone>().Fussioned(this);
+        fussionPos = transform.localPosition;
         List<Transform> listbones = capsule.listBones;
         List<Vector3> listlocalbones = capsule.listLocalBones;
            
@@ -101,6 +105,11 @@ public class BodyPart : MonoBehaviour
 
     public void changed(float inputvalue)
     {
+        Vector3 nextPos;
+        nextPos.x = fussionPos.x + (fussionPos.x * deltaValue) * (inputvalue/100);
+        nextPos.y = fussionPos.y;
+        nextPos.z = fussionPos.z + (fussionPos.z * deltaValue) * (inputvalue/100);
+        transform.localPosition = nextPos;
         //transform.position = vertextrans.position;
     }
 
