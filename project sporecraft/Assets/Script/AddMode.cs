@@ -36,8 +36,9 @@ public class AddMode : MonoBehaviour
         Ray ray = mainCamera.ScreenPointToRay(Input.mousePosition);
         RaycastHit hit;
 
-        if (Physics.Raycast(ray, out hit))
+        if (Physics.Raycast(ray, out hit) )
         {
+            
                 // Raycast hit something, attach object to surface
             Vector3 pointOnSurface = hit.point + hit.normal * 0.001f; // Small offset to prevent Z-fighting
             currentObject.transform.position = pointOnSurface;
@@ -73,7 +74,7 @@ public class AddMode : MonoBehaviour
             {
                 addmode = false;
                 CreateManager.instance.bodyClick.enabled = true;
-                added = false;
+                
                 
                 Destroy(currentObject);
                 Destroy(mirroredObject);
@@ -93,16 +94,11 @@ public class AddMode : MonoBehaviour
             {
                 Destroy(mirroredObject);
             }
-            added = true;
-        }
-
-        if (Input.GetMouseButtonUp(0) && added)
-        {
             if (Input.GetKey(KeyCode.LeftControl))
             {
                 currentObject = Instantiate(CreateManager.instance.partManager.Parts[partid]);
                 mirroredObject = Instantiate(CreateManager.instance.partManager.Parts[partid]);
-                
+
             }
             else
             {
@@ -110,7 +106,7 @@ public class AddMode : MonoBehaviour
                 addmode = false;
                 CreateManager.instance.bodyClick.enabled = true;
             }
-            added = false;
+            
         }
         
     }

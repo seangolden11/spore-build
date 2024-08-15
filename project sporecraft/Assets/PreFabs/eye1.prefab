@@ -10,7 +10,9 @@ GameObject:
   m_Component:
   - component: {fileID: 8101011627874571870}
   - component: {fileID: 5452441318760475497}
-  m_Layer: 0
+  - component: {fileID: 8833497801169970111}
+  - component: {fileID: -8272608146856297789}
+  m_Layer: 9
   m_Name: eye1
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -51,6 +53,56 @@ MonoBehaviour:
     m_Bits: 64
   colliders: []
   short_bone: {fileID: 0}
+  deltaValue: 0
+  fussionPos: {x: 0, y: 0, z: 0}
+--- !u!135 &8833497801169970111
+SphereCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7686946887305345426}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 1
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Radius: 0.954983
+  m_Center: {x: 0, y: 0.454983, z: 0}
+--- !u!54 &-8272608146856297789
+Rigidbody:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7686946887305345426}
+  serializedVersion: 4
+  m_Mass: 1
+  m_Drag: 0
+  m_AngularDrag: 0.05
+  m_CenterOfMass: {x: 0, y: 0, z: 0}
+  m_InertiaTensor: {x: 1, y: 1, z: 1}
+  m_InertiaRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ImplicitCom: 1
+  m_ImplicitTensor: 1
+  m_UseGravity: 0
+  m_IsKinematic: 0
+  m_Interpolate: 0
+  m_Constraints: 0
+  m_CollisionDetection: 0
 --- !u!1001 &3387018852399739174
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -101,7 +153,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 919132149155446097, guid: 11c226069d8afbc45810257f286b2bce, type: 3}
       propertyPath: m_Name
-      value: eye1
+      value: eye1 mesh
+      objectReference: {fileID: 0}
+    - target: {fileID: 919132149155446097, guid: 11c226069d8afbc45810257f286b2bce, type: 3}
+      propertyPath: m_Layer
+      value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []

@@ -800,6 +800,27 @@ public class ProceduralCapsule : MonoBehaviour
         return num;
     }
 
+    public  (Vector3 closestPos, float deltavalue) GetDeltaValue(Vector3 objPos, int blendshapeindex)
+    {
+
+        int closestIndex =0;
+        float minDistance = 100;
+        for (int i = 0; i < vertices.Count; i++)
+        {
+            float distance = Vector3.Distance(objPos, vertices[i]);
+            if (distance < minDistance)
+            {
+                minDistance = distance;
+                closestIndex = i;
+            }
+        }
+
+        Vector3[] deltavertices = new Vector3[vertices.Count];
+        Vector3 tempPos = vertices[closestIndex];
+        sRenderer.sharedMesh.GetBlendShapeFrameVertices(blendshapeindex,0,deltavertices,null,null);
+
+        return (tempPos,deltavertices[closestIndex].x);
+    }
    
 
     }

@@ -10,13 +10,16 @@ public class BodyPart : MonoBehaviour
     public Collider short_bone;
     public float deltaValue;
     ProceduralCapsule capsule;
-    Vector3 fussionPos;
+    public Vector3 fussionPos;
+    
     
     
     private void Start()
     {
         radius = 5;
         capsule = CreateManager.instance.mainBody.GetComponent<ProceduralCapsule>();
+        this.GetComponent<Collider>().enabled = false;
+        
     }
     public Transform FindNearestBone()
     {
@@ -64,40 +67,11 @@ public class BodyPart : MonoBehaviour
         if (short_bone == null)
             FindNearestBone();
         transform.parent = short_bone.transform;
-        short_bone.GetComponent<Bone>().Fussioned(this);
-        fussionPos = transform.localPosition;
-        List<Transform> listbones = capsule.listBones;
-        List<Vector3> listlocalbones = capsule.listLocalBones;
-           
-            
-         Vector3 vertex = transform.localPosition;
-
-           
-               
-               
-         List<KeyValuePair<int, float>> blendWeights = new List<KeyValuePair<int, float>>();
-
-         for (int l = 0; l < listbones.Count; l++)
-         {
-                        float distance = Vector3.Distance(listlocalbones[l], vertex) - 1;
-                        distance = Mathf.Exp(-distance * 1);
-                        //distance = Mathf.Max(0, 1 - distance / 2);
-                        blendWeights.Add(new KeyValuePair<int, float>(l, distance)); // 거리가 가까울수록 높은 가중치
-         }
-
-                    blendWeights.Sort((x, y) => y.Value.CompareTo(x.Value));
-
-                    float totalWeight = 0.0f;
-                    for (int l = 0; l < Mathf.Min(3, blendWeights.Count); l++)
-                    {
-                        totalWeight += blendWeights[l].Value;
-                    }
-
-                    
-
-
-                       
-           deltaValue = (blendWeights[0].Value / totalWeight);
+        var tuple = short_bone.GetComponent<Bone>().Fussioned(this);
+        deltaValue = tuple.dletavalue;
+        fussionPos = tuple.tempPos;
+        deltaValue = Mathf.Abs(deltaValue);
+        this.GetComponent<Collider>().enabled = true;
                     
             
 
@@ -110,7 +84,7 @@ public class BodyPart : MonoBehaviour
         nextPos.y = fussionPos.y;
         nextPos.z = fussionPos.z + (fussionPos.z * deltaValue) * (inputvalue/100);
         transform.localPosition = nextPos;
-        //transform.position = vertextrans.position;
+        
     }
 
 }

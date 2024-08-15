@@ -6,6 +6,7 @@ public class BodyClick : MonoBehaviour
     public LayerMask BodyLayer;
     public LayerMask BoneLayer;
     public LayerMask ArrowLayer;
+    public LayerMask PartLayer;
     private Camera mainCamera;
     private Vector3 offset;
     private float zCoord;
@@ -17,6 +18,7 @@ public class BodyClick : MonoBehaviour
     bool isbodyclicked;
     public bool isArrowClicked;
     public GameObject partPanel;
+    Outline outline;
 
     
 
@@ -24,6 +26,7 @@ public class BodyClick : MonoBehaviour
     {
         mainCamera = Camera.main;
         PC = MainBody.GetComponent<ProceduralCapsule>();
+        outline = CreateManager.instance.outline;
         
     }
 
@@ -32,7 +35,7 @@ public class BodyClick : MonoBehaviour
         if (Input.GetMouseButtonDown(0) && !EventSystem.current.IsPointerOverGameObject())
         {
             Ray ray = mainCamera.ScreenPointToRay(Input.mousePosition);
-            RaycastHit[] hits = Physics.RaycastAll(ray, Mathf.Infinity, BoneLayer | BodyLayer);
+            RaycastHit[] hits = Physics.RaycastAll(ray, Mathf.Infinity, BoneLayer | BodyLayer | PartLayer);
 
             
 
@@ -51,6 +54,8 @@ public class BodyClick : MonoBehaviour
                     isBoneClicked = true;
                     targetObject.GetComponent<Bone>().enabled = true;
                     partPanel.SetActive(true);
+                    outline.ShowOutline(targetObject);
+                    
                     return;
                 }
             }
@@ -68,12 +73,27 @@ public class BodyClick : MonoBehaviour
                     isbodyclicked = true;
                     partPanel.SetActive(true);
                     PC.Cilcked();
-                    
+                    outline.ShowOutline(targetObject);
                     
                     return;
                 }
             }
-            
+            foreach (RaycastHit hit in hits)
+            {
+                if (((1 << hit.collider.gameObject.layer) & PartLayer) != 0)
+                {
+                    targetObject = hit.collider.gameObject;
+                    
+
+                    ClickOther();
+
+                    
+                    partPanel.SetActive(true);
+                    outline.ShowOutline(targetObject);
+
+                    return;
+                }
+            }
             ClickOther();
             
 
@@ -116,11 +136,13 @@ public class BodyClick : MonoBehaviour
             isBoneClicked = false;
             PC.otherCilceked();
             partPanel.SetActive(false);
+            outline.Hideoutline();
             return;
         }
         if (isBoneClicked && targetObject.layer != BoneLayer)
         {
             lastObjectCilcked.GetComponent<Bone>().enabled = false;
+            
             isBoneClicked = false;
         }
         if (isbodyclicked && targetObject.layer != BodyLayer && targetObject.layer != BoneLayer)
