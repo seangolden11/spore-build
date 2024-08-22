@@ -25,6 +25,7 @@ public class Outline : MonoBehaviour
             Hideoutline();
         }
         isShowing = true;
+        
         rd = target.GetComponent<Renderer>();
         if (rd == null)
         {
@@ -49,5 +50,6 @@ public class Outline : MonoBehaviour
         rd.materials = materialList.ToArray();
     }
 
-   
+    
+
 }

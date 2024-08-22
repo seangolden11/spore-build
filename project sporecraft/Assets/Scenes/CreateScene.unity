@@ -1371,6 +1371,7 @@ GameObject:
   - component: {fileID: 1468461759}
   - component: {fileID: 1468461761}
   - component: {fileID: 1468461762}
+  - component: {fileID: 1468461763}
   m_Layer: 0
   m_Name: CreateManager
   m_TagString: Untagged
@@ -1414,6 +1415,9 @@ MonoBehaviour:
   ArrowLayer:
     serializedVersion: 2
     m_Bits: 256
+  PartLayer:
+    serializedVersion: 2
+    m_Bits: 0
   lastObjectCilcked: {fileID: 0}
   MainBody: {fileID: 830497230}
   isArrowClicked: 0
@@ -1466,6 +1470,19 @@ MonoBehaviour:
   addMode: {fileID: 1468461761}
   boneCamera: {fileID: 231344854}
   mainBody: {fileID: 830497230}
+  outline: {fileID: 1468461763}
+--- !u!114 &1468461763
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1468461756}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b60b26caa8844e94da6349eeb2951b8e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &1592270635
 GameObject:
   m_ObjectHideFlags: 0

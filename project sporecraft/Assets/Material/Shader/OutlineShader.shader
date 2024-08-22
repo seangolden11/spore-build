@@ -2,7 +2,7 @@ Shader "Custom/OutlineShader"
 {
    Properties {
 		_OutlineColor ("Outline Color", Color) = (1,0,0,1)
-		_Outline ("Outline width", Range (0, 1)) = .1
+		_Outline ("Outline width", Range (0.01, 0.1)) = 0.1
 	}
  
 CGINCLUDE
@@ -24,7 +24,7 @@ uniform float4 _OutlineColor;
 v2f vert(appdata v) {
 	v2f o;
 
-	v.vertex *= ( 1 + _Outline);
+	v.vertex.xyz += v.normal.xyz * _Outline;
 
 	o.pos = UnityObjectToClipPos(v.vertex);
  
@@ -34,12 +34,12 @@ v2f vert(appdata v) {
 ENDCG
  
 	SubShader {
-		Tags { "DisableBatching" = "True" }
+		Tags { "DisableBatching" = "True" "RenderType" = "Transparent" "Queue" = "Transparent"}
 		Pass {
 			Name "OUTLINE"
 			Tags {"LightMode" = "Always" }
 			Cull Front
-			ZWrite On
+			ZWrite Off
 			ColorMask RGB
 			Blend SrcAlpha OneMinusSrcAlpha
  

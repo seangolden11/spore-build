@@ -19,6 +19,7 @@ public class ProceduralCapsule : MonoBehaviour
     public int botOffset = 0;
     public GameObject topArrow;
     public GameObject bottomArrow;
+    public GameObject bone;
 
     private List<Vector3> vertices;
     
@@ -381,29 +382,13 @@ public class ProceduralCapsule : MonoBehaviour
     {
         if (mode == 1 || mode == 3)
         {
-            GameObject newBone = new GameObject("Bone" + numberOfCylinder); //본추가
-            GameObject newBoneMesh = new GameObject("BoneMesh" + numberOfCylinder);
+
+            GameObject newBone = Instantiate(bone); //본추가
+            newBone.name = ("bone" + numberOfCylinder);
+            
             GameObject ts = new GameObject("bonepoint" + numberOfCylinder);
 
-            newBoneMesh.AddComponent<MeshFilter>().mesh = Resources.GetBuiltinResource<Mesh>("Cylinder.fbx");
-            newBoneMesh.AddComponent<MeshRenderer>().material = new Material(Shader.Find("Standard"));
-            //newBoneMesh.GetComponent<MeshRenderer>();
-
-
-            CapsuleCollider newBoneCollider = newBone.AddComponent<CapsuleCollider>();
-            newBoneCollider.isTrigger = true;
-
-            newBone.layer = LayerMask.NameToLayer("Bone Layer");
-            newBoneMesh.layer = LayerMask.NameToLayer("Bone Mesh Layer");
-
-
-            // Rigidbody 추가
-            Rigidbody rb = newBone.AddComponent<Rigidbody>();
-            rb.drag = float.PositiveInfinity;
-            rb.useGravity = false;
-            rb.isKinematic = false;
-            //rb.constraints |= RigidbodyConstraints.FreezePositionX;
-            //rb.constraints |= RigidbodyConstraints.FreezeRotationX;
+    
 
 
             newBone.transform.parent = sRenderer.rootBone; //부모설정
@@ -414,18 +399,9 @@ public class ProceduralCapsule : MonoBehaviour
             newBone.transform.rotation = transform.rotation;
             ts.transform.rotation = transform.rotation;
 
-
-            newBoneMesh.transform.parent = newBone.transform;
-            newBoneMesh.transform.localScale = new Vector3(0.5f, 0.5f, 0.5f);
-
-            newBoneMesh.transform.localPosition = Vector3.zero;
-            newBoneMesh.transform.rotation = transform.rotation;
-
             Bone  thenewbone= newBone.AddComponent<Bone>();
             thenewbone.mainbody = this.gameObject;
-            
-
-            
+         
 
             if (mode == 3)
             {
@@ -462,7 +438,7 @@ public class ProceduralCapsule : MonoBehaviour
 
                     newBone.transform.position =  topBone.transform.position + (2*topBone.transform.TransformDirection(Vector3.up));
                     newBone.transform.rotation = topBone.transform.rotation;
-                    topBone.GetComponent<HingeJoint>().connectedBody = rb;
+                    topBone.GetComponent<HingeJoint>().connectedBody = newBone.GetComponent<Rigidbody>();
                     topBone = newBone;
                      
 
