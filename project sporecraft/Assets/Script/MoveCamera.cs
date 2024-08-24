@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using System.Collections.Generic;
+using UnityEngine;
 
 public class MoveCamera : MonoBehaviour
 {
@@ -10,8 +11,12 @@ public class MoveCamera : MonoBehaviour
     private float yaw = 0.0f;
     private float pitch = 0.0f;
 
+    List<Vector3> ElementPos;
+
     void Start()
     {
+        ElementPos = new List<Vector3>();
+        this.GetComponent<PlayCamer>().enabled = false;
         // 시작할 때 마우스 커서를 잠금 상태로 설정
         //Cursor.lockState = CursorLockMode.Locked;
     }
@@ -65,5 +70,19 @@ public class MoveCamera : MonoBehaviour
         {
             Cursor.lockState = CursorLockMode.None;
         }
+    }
+
+    public void ChangeToPlay()
+    {
+        Transform[] childTrans = GetComponentsInChildren<Transform>(); 
+        foreach (Transform t in childTrans) {
+            ElementPos.Add(t.localPosition);
+            t.localPosition = Vector3.zero;
+        }
+        this.transform.rotation = Quaternion.identity;
+        this.transform.Rotate(0, 90, 0);
+        this.GetComponent<PlayCamer>().enabled = true;
+        this.enabled = false;
+
     }
 }

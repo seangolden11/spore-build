@@ -11,6 +11,7 @@ public class BodyPart : MonoBehaviour
     public float deltaValue;
     ProceduralCapsule capsule;
     public Vector3 fussionPos;
+    public BodyPartData partData;
     
     
     
@@ -74,6 +75,10 @@ public class BodyPart : MonoBehaviour
         fussionPos = tuple.tempPos;
         deltaValue = Mathf.Abs(deltaValue);
         this.GetComponent<Collider>().enabled = true;
+        if(partData.itemType == BodyPartData.ItemType.eye)
+        {
+            CreateManager.instance.mainBody.GetComponent<EyePos>().AddEyePos(this.transform);
+        }
                     
             
 
@@ -87,6 +92,14 @@ public class BodyPart : MonoBehaviour
         nextPos.z = fussionPos.z + (fussionPos.z * deltaValue) * (inputvalue/100);
         transform.localPosition = nextPos;
         
+    }
+
+    private void OnDestroy()
+    {
+        if (partData.itemType == BodyPartData.ItemType.eye)
+        {
+            CreateManager.instance.mainBody.GetComponent<EyePos>().AddEyePos(this.transform);
+        }
     }
 
 }

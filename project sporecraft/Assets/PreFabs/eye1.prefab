@@ -55,6 +55,7 @@ MonoBehaviour:
   short_bone: {fileID: 0}
   deltaValue: 0
   fussionPos: {x: 0, y: 0, z: 0}
+  partData: {fileID: 11400000, guid: 24bc4aa356c21cc418ba047a81ce965b, type: 2}
 --- !u!135 &8833497801169970111
 SphereCollider:
   m_ObjectHideFlags: 0

@@ -11,6 +11,7 @@ public class CreateManager : MonoBehaviour
     public Camera boneCamera;
     public GameObject mainBody;
     public Outline outline;
+    public Transform camerholder;
     private void Awake()
     {
         instance = this;
@@ -35,5 +36,16 @@ public class CreateManager : MonoBehaviour
         {
             bodyClick.enabled = true;
         }
+    }
+
+    public void StartPlay()
+    {
+        bodyClick.enabled=false;
+        addMode.enabled=false;
+        boneCamera.enabled=false;
+        camerholder.transform.parent = CreateManager.instance.mainBody.GetComponent<EyePos>().Eyepos[0];
+        camerholder.transform.localPosition = Vector3.zero;
+        camerholder.GetComponent<MoveCamera>().ChangeToPlay();
+        mainBody.GetComponent<Player>().enabled = true;
     }
 }
