@@ -1212,6 +1212,7 @@ MonoBehaviour:
   botOffset: 0
   topArrow: {fileID: 2007351377}
   bottomArrow: {fileID: 77293872}
+  bone: {fileID: 8636503810686903499, guid: e35276143e450cc4e989e11c31948c84, type: 3}
   sRenderer: {fileID: 0}
   topBone: {fileID: 0}
   bottomBone: {fileID: 0}

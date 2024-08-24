@@ -15,4 +15,25 @@ public class CreateManager : MonoBehaviour
     {
         instance = this;
     }
+
+    public void SwitchClickMode()
+    {
+        StartCoroutine(SwitchAfterDelay());
+        
+    }
+
+    IEnumerator SwitchAfterDelay()
+    {
+        // 1√  ¥Î±‚
+        yield return new WaitForSeconds(0.5f);
+
+        if (bodyClick.enabled)
+        {
+            bodyClick.enabled = false;
+        }
+        else
+        {
+            bodyClick.enabled = true;
+        }
+    }
 }

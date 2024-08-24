@@ -67,7 +67,9 @@ public class BodyPart : MonoBehaviour
         if (short_bone == null)
             FindNearestBone();
         transform.parent = short_bone.transform;
+        
         var tuple = short_bone.GetComponent<Bone>().Fussioned(this);
+        
         deltaValue = tuple.dletavalue;
         fussionPos = tuple.tempPos;
         deltaValue = Mathf.Abs(deltaValue);

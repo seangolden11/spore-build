@@ -10,14 +10,14 @@ public class Bone : MonoBehaviour
     public float blendvalue;
     public float speed = 100f;
     ProceduralCapsule capsule;
-    List<BodyPart> childparts;
+    public List<BodyPart> childparts;
     public float wheelinput;
     bool isScrolling;
     float lastScrollTime;
     float scrollThreshold = 0.1f;
     // Start is called before the first frame update
 
-    private void Start()
+    private void Awake()
     {
         wheelinput = 0;
         childparts = new List<BodyPart>();
@@ -62,10 +62,12 @@ public class Bone : MonoBehaviour
 
     public (Vector3 tempPos,float dletavalue) Fussioned(BodyPart temp)
     {
+        
         childparts.Add(temp);
+        
         bonenum = capsule.returnboneint(this.transform);
         
-        return capsule.GetDeltaValue(temp.transform.localPosition, bonenum); ;
+        return capsule.GetDeltaValue(temp.transform.localPosition, bonenum);
     }
 
     void ChildPartsTrans(float inputvalue)

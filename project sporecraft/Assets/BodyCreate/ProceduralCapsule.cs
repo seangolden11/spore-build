@@ -399,8 +399,7 @@ public class ProceduralCapsule : MonoBehaviour
             newBone.transform.rotation = transform.rotation;
             ts.transform.rotation = transform.rotation;
 
-            Bone  thenewbone= newBone.AddComponent<Bone>();
-            thenewbone.mainbody = this.gameObject;
+            
          
 
             if (mode == 3)

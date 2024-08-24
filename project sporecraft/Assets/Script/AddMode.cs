@@ -13,6 +13,7 @@ public class AddMode : MonoBehaviour
     bool added;
     public float rotationSimilarityThreshold;
     bool isRotationSim;
+    bool again;
 
 
 
@@ -22,7 +23,7 @@ public class AddMode : MonoBehaviour
         mainCamera = Camera.main;
         addmode = false;
         added = false;
-        
+        again = false;
         isRotationSim = false;
         //this.enabled = false;
         
@@ -96,18 +97,19 @@ public class AddMode : MonoBehaviour
             }
             if (Input.GetKey(KeyCode.LeftControl))
             {
-                currentObject = Instantiate(CreateManager.instance.partManager.Parts[partid]);
-                mirroredObject = Instantiate(CreateManager.instance.partManager.Parts[partid]);
+                
+                    currentObject = Instantiate(CreateManager.instance.partManager.Parts[partid]);
+                    mirroredObject = Instantiate(CreateManager.instance.partManager.Parts[partid]);
 
             }
             else
             {
 
                 addmode = false;
-                CreateManager.instance.bodyClick.enabled = true;
+                CreateManager.instance.SwitchClickMode();
             }
-            
         }
+        
         
     }
 
