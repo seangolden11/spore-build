@@ -185,6 +185,7 @@ MonoBehaviour:
   bonenum: 0
   blendvalue: 0
   speed: 100
+  childparts: []
   wheelinput: 0
 --- !u!1 &8655280159775640672
 GameObject:

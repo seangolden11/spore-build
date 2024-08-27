@@ -94,12 +94,12 @@ public class BodyPart : MonoBehaviour
         
     }
 
-    private void OnDestroy()
+    /*private void OnDestroy()
     {
         if (partData.itemType == BodyPartData.ItemType.eye)
         {
-            CreateManager.instance.mainBody.GetComponent<EyePos>().AddEyePos(this.transform);
+            CreateManager.instance.mainBody.GetComponent<EyePos>().DeleteEyePos(this.transform);
         }
     }
-
+    */
 }

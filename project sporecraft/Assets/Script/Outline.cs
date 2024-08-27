@@ -42,6 +42,8 @@ public class Outline : MonoBehaviour
 
     public void Hideoutline()
     {
+        if (!isShowing)
+            return;
         isShowing = false;
         materialList.Clear();
         materialList.AddRange(rd.sharedMaterials);

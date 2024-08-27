@@ -12,9 +12,12 @@ public class CreateManager : MonoBehaviour
     public GameObject mainBody;
     public Outline outline;
     public Transform camerholder;
+
+    bool isplaymode;
     private void Awake()
     {
         instance = this;
+        isplaymode = false;
     }
 
     public void SwitchClickMode()
@@ -40,6 +43,8 @@ public class CreateManager : MonoBehaviour
 
     public void StartPlay()
     {
+        if (isplaymode)
+            return;
         bodyClick.enabled=false;
         addMode.enabled=false;
         boneCamera.enabled=false;
@@ -47,5 +52,7 @@ public class CreateManager : MonoBehaviour
         camerholder.transform.localPosition = Vector3.zero;
         camerholder.GetComponent<MoveCamera>().ChangeToPlay();
         mainBody.GetComponent<Player>().enabled = true;
+        mainBody.GetComponent<Player>().enterplaymode();
+        isplaymode=true;
     }
 }

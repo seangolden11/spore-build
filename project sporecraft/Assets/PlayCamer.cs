@@ -29,12 +29,9 @@ public class PlayCamer : MonoBehaviour
         xRotation -= mouseY;
         xRotation = Mathf.Clamp(xRotation, -90f, 90f);  // 회전 각도 제한
 
-        
 
-        transform.rotation = Quaternion.Euler(xRotation, transform.rotation.y, 0);
-        transform.localRotation = Quaternion.Euler(transform.eulerAngles);
-        transform.rotation = Quaternion.Euler(transform.eulerAngles.x,transform.eulerAngles.y,0);
-        //transform.localRotation = Quaternion.
+
+        transform.rotation = Quaternion.Euler(xRotation, playerHead.rotation.eulerAngles.y -180, 0);
 
         // 수평 회전 처리 (플레이어 몸체와 함께 회전)
         playerHead.Rotate(Vector3.forward * mouseX);
