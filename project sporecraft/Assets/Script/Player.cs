@@ -65,7 +65,7 @@ public class Player : MonoBehaviour
 
     void OnTriggerEnter(Collider collision)
     {
-        Debug.Log("colli");
+        
         if (collision.gameObject.CompareTag("Ground"))
         {
             Debug.Log("ground");
@@ -83,9 +83,9 @@ public class Player : MonoBehaviour
 
     public void enterplaymode()
     {
-        GetComponent<MeshCollider>().enabled = false;
-        playColl = GetComponent<CapsuleCollider>();
-        playColl.enabled = true;
+        GetComponent<MeshCollider>().convex = true;
+        //playColl = GetComponent<CapsuleCollider>();
+        //playColl.enabled = true;
 
         rb = this.gameObject.AddComponent<Rigidbody>();
         rb.isKinematic = true;

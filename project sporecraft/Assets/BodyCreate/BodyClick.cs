@@ -18,6 +18,7 @@ public class BodyClick : MonoBehaviour
     bool isbodyclicked;
     public bool isArrowClicked;
     public GameObject partPanel;
+    bool isbuttondown;
     Outline outline;
 
     
@@ -27,6 +28,7 @@ public class BodyClick : MonoBehaviour
         mainCamera = Camera.main;
         PC = MainBody.GetComponent<ProceduralCapsule>();
         outline = CreateManager.instance.outline;
+        isbuttondown = false;
         
     }
 
@@ -34,10 +36,12 @@ public class BodyClick : MonoBehaviour
     {
         if (Input.GetMouseButtonDown(0) && !EventSystem.current.IsPointerOverGameObject())
         {
+            if (isbuttondown)
+                return;
             Ray ray = mainCamera.ScreenPointToRay(Input.mousePosition);
             RaycastHit[] hits = Physics.RaycastAll(ray, Mathf.Infinity, BoneLayer | BodyLayer | PartLayer);
 
-            
+            isbuttondown = true;
 
             foreach (RaycastHit hit in hits)
             {
@@ -108,7 +112,8 @@ public class BodyClick : MonoBehaviour
 
         if (Input.GetMouseButtonUp(0))
         {
-            
+            if(!isbuttondown)
+                return;
             lastObjectCilcked = targetObject;
             
             targetObject = null;
@@ -117,13 +122,14 @@ public class BodyClick : MonoBehaviour
                 PC.UpdateMeshCollider();
                 
             }
-
+            isbuttondown = false;
         }
     }
 
     void ClickOther()
     {
         Debug.Log(targetObject);
+        Debug.Log(lastObjectCilcked);
         if (EventSystem.current.IsPointerOverGameObject())
             return;
         if(targetObject == null)
@@ -139,7 +145,7 @@ public class BodyClick : MonoBehaviour
             outline.Hideoutline();
             return;
         }
-        if (isBoneClicked && targetObject.layer != BoneLayer)
+        if (isBoneClicked && (targetObject.layer != BoneLayer))
         {
             lastObjectCilcked.GetComponent<Bone>().enabled = false;
             

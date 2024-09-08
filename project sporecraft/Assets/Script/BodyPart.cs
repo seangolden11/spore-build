@@ -1,5 +1,7 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 public class BodyPart : MonoBehaviour
@@ -12,13 +14,18 @@ public class BodyPart : MonoBehaviour
     ProceduralCapsule capsule;
     public Vector3 fussionPos;
     public BodyPartData partData;
-    
+    public GameObject targetObject;
+    int vertexIndex;
+    Vector3[] vertices;
+    SkinnedMeshRenderer skRender;
+    Mesh bakedMesh;
     
     
     private void Start()
     {
         radius = 5;
         capsule = CreateManager.instance.mainBody.GetComponent<ProceduralCapsule>();
+        bakedMesh = new Mesh();
         this.GetComponent<Collider>().enabled = false;
         
     }
@@ -68,12 +75,11 @@ public class BodyPart : MonoBehaviour
         if (short_bone == null)
             FindNearestBone();
         transform.parent = short_bone.transform;
+        targetObject = short_bone.transform.root.gameObject;
+        short_bone.GetComponent<Bone>().Fussioned(this);
         
-        var tuple = short_bone.GetComponent<Bone>().Fussioned(this);
+        InitTargetMesh();
         
-        deltaValue = tuple.dletavalue;
-        fussionPos = tuple.tempPos;
-        deltaValue = Mathf.Abs(deltaValue);
         this.GetComponent<Collider>().enabled = true;
         if(partData.itemType == BodyPartData.ItemType.eye)
         {
@@ -86,14 +92,39 @@ public class BodyPart : MonoBehaviour
 
     public void changed(float inputvalue)
     {
-        Vector3 nextPos;
-        nextPos.x = fussionPos.x + (fussionPos.x * deltaValue) * (inputvalue/100);
-        nextPos.y = fussionPos.y;
-        nextPos.z = fussionPos.z + (fussionPos.z * deltaValue) * (inputvalue/100);
-        transform.localPosition = nextPos;
-        
+        //vertices = targetObject.GetComponent<MeshFilter>().sharedMesh.vertices;
+
+        InitTargetMesh();
+
+        transform.position = skRender.transform.TransformPoint(vertices[vertexIndex]);
     }
 
+    void InitTargetMesh()
+    {
+        skRender = targetObject.GetComponent<SkinnedMeshRenderer>();
+        skRender.BakeMesh(bakedMesh);
+        vertices = bakedMesh.vertices;
+        vertexIndex = GetClosetIndex();
+    }
+
+    int GetClosetIndex()
+    {
+
+        int closestIndex = 0;
+        float minDistance = 100;
+        for (int i = 0; i < vertices.Length; i++)
+        {
+            float distance = Vector3.Distance(this.transform.position, targetObject.transform.TransformPoint(vertices[i]));
+            if (distance < minDistance)
+            {
+                minDistance = distance;
+                closestIndex = i;
+            }
+        }
+
+
+        return closestIndex;
+    }
     /*private void OnDestroy()
     {
         if (partData.itemType == BodyPartData.ItemType.eye)

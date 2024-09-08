@@ -39,6 +39,7 @@ public class Bone : MonoBehaviour
             blendvalue += wheelinput * speed;
             bonenum = capsule.returnboneint(this.transform);
             capsule.sRenderer.SetBlendShapeWeight(bonenum, blendvalue);
+            //capsule.UpdateMeshCollider();
             ChildPartsTrans(blendvalue);
         }
         else if(wheelinput < 0 && blendvalue > 0)
@@ -60,14 +61,17 @@ public class Bone : MonoBehaviour
 
     }
 
-    public (Vector3 tempPos,float dletavalue) Fussioned(BodyPart temp)
+    public (Vector3 tempPos, float deltaValue) Fussioned(BodyPart temp)
     {
         
         childparts.Add(temp);
+
         
         bonenum = capsule.returnboneint(this.transform);
+
+        return capsule.GetDeltaValue(temp.gameObject.transform.position, bonenum);
         
-        return capsule.GetDeltaValue(temp.transform.localPosition, bonenum);
+        
     }
 
     void ChildPartsTrans(float inputvalue)
@@ -78,45 +82,6 @@ public class Bone : MonoBehaviour
         }
     }
 
-    public void MeshNormalAverage(Mesh mesh)
-    {
-        Dictionary<Vector3, List<int>> map = new Dictionary<Vector3, List<int>>();
-
-        #region bulid the map of vertex and triangles relation
-        for (int v = 0; v < mesh.vertexCount; v++)
-        {
-            if (!map.ContainsKey(mesh.vertices[v]))
-            {
-                map.Add(mesh.vertices[v], new List<int>());
-            }
-            map[mesh.vertices[v]].Add(v);
-        }
-        #endregion
-
-        Vector3[] normals = mesh.normals;
-        Vector3 normal;
-
-        #region the same vertex use the same normal(average)
-        foreach (var p in map)
-        {
-            normal = Vector3.zero;
-
-            foreach (var n in p.Value)
-            {
-                normal += mesh.normals[n];
-            }
-
-            normal /= p.Value.Count;
-
-            foreach (var n in p.Value)
-            {
-                normals[n] = normal;
-            }
-        }
-        #endregion
-
-        mesh.normals = normals;
-
-    }
+    
 
 }
