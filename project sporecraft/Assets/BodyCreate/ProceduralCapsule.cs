@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using Unity.VisualScripting;
+using UnityEditor;
 using UnityEngine;
 using UnityEngine.Rendering;
 using UnityEngine.UIElements;
@@ -20,11 +21,14 @@ public class ProceduralCapsule : MonoBehaviour
     public GameObject topArrow;
     public GameObject bottomArrow;
     public GameObject bone;
+    public bool isFirst;
+    public Material mat;
+
 
     private List<Vector3> vertices;
     
     private List<int> triangles;
-    MeshFilter meshFilter;
+    public MeshFilter meshFilter;
     public SkinnedMeshRenderer sRenderer;
     public GameObject topBone;
     public GameObject bottomBone;
@@ -41,23 +45,43 @@ public class ProceduralCapsule : MonoBehaviour
     public List<Transform> listBones;
     public List<Vector3> listLocalBones;
 
-    private void Start()
+    
+    public void make()
     {
         meshFilter = gameObject.AddComponent<MeshFilter>();
+        
         meshFilter.mesh = CreateCapsuleMesh(subdivisionHeight, subdivisionAround, radius, height);
-        sRenderer = gameObject.GetComponent<SkinnedMeshRenderer>();
-        sRenderer.material = new Material(Shader.Find("Standard"));
-        mc = GetComponent<MeshCollider>();
+        mc = gameObject.AddComponent<MeshCollider>();
+
+        sRenderer = gameObject.AddComponent<SkinnedMeshRenderer>();
+        sRenderer.BakeMesh(meshFilter.mesh);
+        sRenderer.material = mat;
+        GameObject rootBone = new GameObject("root Bone");
+        rootBone.transform.parent = transform;
+        rootBone.transform.localPosition = Vector3.zero;
+        sRenderer.rootBone = rootBone.transform;
+
+        
+        
         bakedMesh = new Mesh();
         UpdateMeshCollider();
-        listBones = new List<Transform>();
-        listLocalBones = new List<Vector3>();
-        CreateBones(1,Vector3.zero);
-        
-        toparrowSc = topArrow.GetComponent<Arrow>();
-        botArrowSc = bottomArrow.GetComponent<Arrow>();
-        topArrow.SetActive(false);
-        bottomArrow.SetActive(false);
+        if (listBones == null)
+            listBones = new List<Transform>();
+        if (listLocalBones == null)
+            listLocalBones = new List<Vector3>();
+        CreateBones(1, Vector3.zero);
+        if (isFirst)
+        {
+            
+            toparrowSc = topArrow.GetComponent<Arrow>();
+            botArrowSc = bottomArrow.GetComponent<Arrow>();
+            topArrow.SetActive(false);
+            bottomArrow.SetActive(false);
+        }
+       
+            
+
+       
 
 
 
@@ -796,6 +820,8 @@ public class ProceduralCapsule : MonoBehaviour
 
         return (tempPos, deltavertices[closestIndex].x);
     }
+
+   
 
 
 }

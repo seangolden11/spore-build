@@ -19,6 +19,10 @@ public class CreateManager : MonoBehaviour
         instance = this;
         isplaymode = false;
     }
+    private void Start()
+    {
+        mainBody.GetComponent<ProceduralCapsule>().make();
+    }
 
     public void SwitchClickMode()
     {
