@@ -44,6 +44,8 @@ public class Outline : MonoBehaviour
     {
         if (!isShowing)
             return;
+        if (rd == null)
+            return;
         isShowing = false;
         materialList.Clear();
         materialList.AddRange(rd.sharedMaterials);

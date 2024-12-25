@@ -87,6 +87,20 @@ public class ProceduralCapsule : MonoBehaviour
 
     }
 
+    public void CallOnLoad()
+    {
+        toparrowSc = topArrow.GetComponent<Arrow>();
+        botArrowSc = bottomArrow.GetComponent<Arrow>();
+        if (bakedMesh == null)
+            bakedMesh = new Mesh();
+        if (mc == null)
+            mc = gameObject.GetComponent<MeshCollider>();
+        UpdateMeshCollider();
+        boneCamera = CreateManager.instance.boneCamera;
+        vertices = new List<Vector3>();
+        vertices.AddRange(sRenderer.sharedMesh.vertices);
+    }
+
     public void UpdateMeshCollider()
     {
         

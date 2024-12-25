@@ -38,6 +38,12 @@ public class BodyClick : MonoBehaviour
         {
             if (isbuttondown)
                 return;
+            if (PC == null)
+            {
+                MainBody = CreateManager.instance.mainBody;
+                PC = MainBody.GetComponent<ProceduralCapsule>();
+
+            }
             Ray ray = mainCamera.ScreenPointToRay(Input.mousePosition);
             RaycastHit[] hits = Physics.RaycastAll(ray, Mathf.Infinity, BoneLayer | BodyLayer | PartLayer);
 
@@ -128,6 +134,7 @@ public class BodyClick : MonoBehaviour
 
     void ClickOther()
     {
+        
         Debug.Log(targetObject);
         Debug.Log(lastObjectCilcked);
         if (EventSystem.current.IsPointerOverGameObject())

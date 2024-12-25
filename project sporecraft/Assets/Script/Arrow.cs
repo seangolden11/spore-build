@@ -40,6 +40,12 @@ public class Arrow : MonoBehaviour
         }
     }
 
+    private void OnEnable()
+    {
+        if (cameraTrans == null)
+            cameraTrans = CreateManager.instance.camerholder;
+    }
+
     private void OnMouseDown()
     {
         if (mainCamera == null) return;

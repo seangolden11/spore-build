@@ -29,6 +29,11 @@ public class Bone : MonoBehaviour
         this.enabled = false;
     }
 
+    private void OnEnable()
+    {
+        capsule = CreateManager.instance.mainBody.GetComponent<ProceduralCapsule>();
+    }
+
     private void Update()
     {
         wheelinput = Input.GetAxis("Mouse ScrollWheel");
