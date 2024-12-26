@@ -4,14 +4,14 @@ using UnityEditor;
 
 public class ObjectDataManager : MonoBehaviour
 {
-    public void SaveCapsule()
+    public void SaveCapsule(string name)
     {
        
 
         MeshFilter meshFilter = CreateManager.instance.mainBody.GetComponent<MeshFilter>();
         if (meshFilter != null && meshFilter.sharedMesh != null)
         {
-            string meshPath = "Assets/CreatureMeshs/" +"name" + ".mesh";
+            string meshPath = "Assets/CreatureMeshs/" + name + ".mesh";
             Mesh existingMesh = AssetDatabase.LoadAssetAtPath<Mesh>(meshPath);
             if (existingMesh == null)
             {
@@ -21,7 +21,7 @@ public class ObjectDataManager : MonoBehaviour
             meshFilter.sharedMesh = AssetDatabase.LoadAssetAtPath<Mesh>(meshPath);
         }
 
-        string localpath = "Assets/CreaturePrefabs/" + CreateManager.instance.mainBody.name + ".prefab";
+        string localpath = "Assets/CreaturePrefabs/" + name + ".prefab";
 
         localpath = AssetDatabase.GenerateUniqueAssetPath(localpath);
 
@@ -33,7 +33,7 @@ public class ObjectDataManager : MonoBehaviour
     public void LoadGameObject(string name)
     {
         string prefabFolder = "Assets/CreaturePrefabs";
-        string[] prefabPaths = AssetDatabase.FindAssets("t:Prefab", new[] { prefabFolder });
+        string[] prefabPaths = AssetDatabase.FindAssets($"{name} t:Prefab", new[] { prefabFolder });
 
         if (prefabPaths.Length > 0)
         {
