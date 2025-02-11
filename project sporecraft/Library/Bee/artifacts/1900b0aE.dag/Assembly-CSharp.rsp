@@ -409,6 +409,7 @@
 "Assets/Script/BodyPartData.cs"
 "Assets/Script/Chunk.cs"
 "Assets/Script/CreateManager.cs"
+"Assets/Script/DataContent.cs"
 "Assets/Script/EyePos.cs"
 "Assets/Script/FollowTarget.cs"
 "Assets/Script/FreeCameraLook.cs"
@@ -422,6 +423,7 @@
 "Assets/Script/Pivot.cs"
 "Assets/Script/PlayCamer.cs"
 "Assets/Script/Player.cs"
+"Assets/Script/ScrollView.cs"
 "Assets/Script/VoxelData.cs"
 "Assets/Script/World.cs"
 -langversion:9.0
