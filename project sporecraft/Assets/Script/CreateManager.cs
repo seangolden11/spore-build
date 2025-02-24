@@ -12,6 +12,8 @@ public class CreateManager : MonoBehaviour
     public GameObject mainBody;
     public Outline outline;
     public Transform camerholder;
+    public ObjectDataManager objectDataManager;
+    public Light light;
 
     bool isplaymode;
     private void Awake()
