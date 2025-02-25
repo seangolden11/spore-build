@@ -7,10 +7,11 @@ public class BodyClick : MonoBehaviour
     public LayerMask BoneLayer;
     public LayerMask ArrowLayer;
     public LayerMask PartLayer;
+    
     private Camera mainCamera;
     private Vector3 offset;
     private float zCoord;
-    private GameObject targetObject;
+    public GameObject targetObject;
     public GameObject lastObjectCilcked;
     public GameObject MainBody;
     ProceduralCapsule PC;
@@ -104,6 +105,8 @@ public class BodyClick : MonoBehaviour
                     return;
                 }
             }
+            
+
             ClickOther();
             
 
@@ -132,7 +135,7 @@ public class BodyClick : MonoBehaviour
         }
     }
 
-    void ClickOther()
+    public void ClickOther()
     {
         
         Debug.Log(targetObject);

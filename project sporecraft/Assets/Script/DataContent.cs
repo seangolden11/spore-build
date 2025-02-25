@@ -3,7 +3,7 @@ using UnityEngine.UI;
 
 public class DataContent : MonoBehaviour
 {
-    public GameObject prefab;
+    public ObjectData prefab;
     Text text;
     Image icon;
     public Camera iconCamera; // 아이콘을 찍을 카메라
@@ -22,12 +22,13 @@ public class DataContent : MonoBehaviour
         scrollView = GetComponentInParent<ScrollView>();
     }
 
-    public void Init(GameObject newprefab, Sprite newSprite)
+    public void Init(ObjectData prefabData, Sprite newSprite)
     {
-        prefab = newprefab;
+        prefab = prefabData;
         if (prefab != null)
         {
             text.text = prefab.name;
+            myname = prefab.name;
             icon.sprite = newSprite;
         }
         else 
@@ -59,7 +60,15 @@ public class DataContent : MonoBehaviour
 
     public void Loadbutton()
     {
-        dataManager.LoadGameObject(myname);
+        dataManager.LoadCapsule(myname);
+    }
+
+    public void DeleteButton()
+    {
+        if (myname == null)
+            return;
+        dataManager.DeleteCapsule(myname);
+        scrollView.DataInit();
     }
 
     // Update is called once per frame

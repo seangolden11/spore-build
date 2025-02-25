@@ -1,196 +1,286 @@
 using UnityEngine;
 using System.IO;
-using UnityEditor;
+using System.Collections.Generic;
 using UnityEngine.UI;
+using System.Text.RegularExpressions;
 
 public class ObjectDataManager : MonoBehaviour
 {
-    public void SaveCapsule(string name)
+
+    public static ObjectDataManager instance;
+
+    private string saveBasePath;
+    string meshesPath;
+    string iconsPath;
+
+    private void Awake()
     {
-       
-
-        MeshFilter meshFilter = CreateManager.instance.mainBody.GetComponent<MeshFilter>();
-        if (meshFilter != null && meshFilter.sharedMesh != null)
+        if (instance == null)
         {
-            string meshPath = "Assets/CreatureData/CreatureMeshs/" + name + ".mesh";
-            Mesh existingMesh = AssetDatabase.LoadAssetAtPath<Mesh>(meshPath);
-            if (existingMesh == null)
-            {
-                AssetDatabase.CreateAsset(meshFilter.sharedMesh, meshPath);
-                AssetDatabase.SaveAssets();
-            }
-            meshFilter.sharedMesh = AssetDatabase.LoadAssetAtPath<Mesh>(meshPath);
-        }
-
-        string localpath = "Assets/CreatureData/CreaturePrefabs/" + name + ".prefab";
-
-        localpath = AssetDatabase.GenerateUniqueAssetPath(localpath);
-
-        PrefabUtility.SaveAsPrefabAssetAndConnect(CreateManager.instance.mainBody, localpath, InteractionMode.UserAction);
-
-        GenerateIcon(CreateManager.instance.mainBody, name);
-
-        Debug.Log("캡슐 데이터가 저장되었습니다: " + localpath);
-    }
-
-    public void LoadGameObject(string name)
-    {
-        string prefabFolder = "Assets/CreatureData/CreaturePrefabs";
-        string[] prefabPaths = AssetDatabase.FindAssets($"{name} t:Prefab", new[] { prefabFolder });
-
-        if (prefabPaths.Length > 0)
-        {
-            // 첫 번째 프리팹 로드
-            string prefabPath = AssetDatabase.GUIDToAssetPath(prefabPaths[0]);
-            GameObject prefab = AssetDatabase.LoadAssetAtPath<GameObject>(prefabPath);
-
-            if (prefab != null)
-            {
-                // 기존 객체 삭제
-                if (CreateManager.instance.mainBody != null)
-                {
-                    Destroy(CreateManager.instance.mainBody);
-                }
-
-                // 프리팹 인스턴스화
-                GameObject prefabInstance = Instantiate(prefab);
-                CreateManager.instance.mainBody = prefabInstance;
-                prefabInstance.GetComponent<ProceduralCapsule>().CallOnLoad();
-
-                Debug.Log("프리팹이 인스턴스화되었습니다: " + prefabInstance.name);
-            }
-            else
-            {
-                Debug.LogWarning("프리팹 로드에 실패했습니다: " + prefabPath);
-            }
+            instance = this;
+            DontDestroyOnLoad(gameObject);
         }
         else
         {
-            Debug.LogWarning("폴더에 프리팹이 없습니다.");
+            Destroy(gameObject);
+            return;
+        }
+
+        // 경로 설정
+        saveBasePath = Application.persistentDataPath + "/CreatureData/";
+
+
+       
+        meshesPath = saveBasePath + "CreatureMeshs/";
+        iconsPath = saveBasePath + "CreatureIcons/";
+
+        // 필요한 디렉토리 생성
+        EnsureDirectoryExists(saveBasePath);
+        EnsureDirectoryExists(meshesPath);
+        EnsureDirectoryExists(iconsPath);
+    }
+
+    private void EnsureDirectoryExists(string path)
+    {
+        if (!Directory.Exists(path))
+        {
+            Directory.CreateDirectory(path);
+        }
+    }
+    public void SaveCapsule(string name)
+    {
+        GameObject capsule = CreateManager.instance.mainBody;
+
+        // 메시 데이터 추출
+        MeshFilter meshFilter = capsule.GetComponent<MeshFilter>();
+        if (meshFilter == null || meshFilter.sharedMesh == null)
+        {
+            Debug.LogError("메시 필터가 없거나 메시가 없습니다.");
+            return;
+        }
+
+        Mesh mesh = meshFilter.sharedMesh;
+        ProceduralCapsule dummycapsule = capsule.GetComponent<ProceduralCapsule>();
+
+        // 캡슐 데이터 생성
+        ObjectData capsuleData = new ObjectData
+        {
+            name = name,
+            vertices = mesh.vertices,
+            triangles = mesh.triangles,
+            normals = mesh.normals,
+            uv = mesh.uv,
+            position = capsule.transform.position,
+            rotation = capsule.transform.eulerAngles,
+            scale = capsule.transform.localScale,
+            subdivisionHeight = dummycapsule.subdivisionHeight,
+            subdivisionAround = dummycapsule.subdivisionAround,
+            radius = dummycapsule.radius,
+            height = dummycapsule.height,
+            cylinderDivision = dummycapsule.cylinderDivision,
+            topOffest = dummycapsule.topOffest,
+            numberOfCylinder = dummycapsule.numberOfCylinder,
+            botOffset = dummycapsule.botOffset,
+};
+        /*
+        // 머테리얼 색상이 있으면 저장
+        Renderer renderer = capsule.GetComponent<Renderer>();
+        if (renderer != null && renderer.material != null)
+        {
+            capsuleData.color = renderer.material.color;
+        }*/
+
+        // JSON으로 직렬화하여 저장
+        string jsonData = JsonUtility.ToJson(capsuleData, true);
+        string filePath = meshesPath + name + ".json";
+        File.WriteAllText(filePath, jsonData);
+
+       
+
+        // 아이콘 생성 및 저장
+        GenerateIcon(capsule, name);
+
+        Debug.Log("캡슐 데이터가 저장되었습니다: " + filePath);
+    }
+
+    public void DeleteCapsule(string name)
+    {
+        string meshPath = meshesPath + name + ".json";
+        string iconPath = iconsPath + name + ".png";
+
+        bool deleted = false;
+
+        // 메시 파일 삭제
+        if (File.Exists(meshPath))
+        {
+            File.Delete(meshPath);
+            deleted = true;
+            Debug.Log("메시 파일이 삭제되었습니다: " + meshPath);
+        }
+
+
+        // 아이콘 이미지 삭제
+        if (File.Exists(iconPath))
+        {
+            File.Delete(iconPath);
+            deleted = true;
+            Debug.Log("아이콘 파일이 삭제되었습니다: " + iconPath);
+        }
+
+        if (deleted)
+        {
+            Debug.Log("캡슐 데이터가 성공적으로 삭제되었습니다: " + name);
+        }
+        else
+        {
+            Debug.LogWarning("삭제할 캡슐 데이터를 찾을 수 없습니다: " + name);
         }
     }
 
-    public void GenerateIcon(GameObject prefab, string iconname)
+    public GameObject LoadCapsule(string name)
     {
-        // 프리팹 이름 가져오기
-        string prefabName = iconname;
+        string filePath = meshesPath + name + ".json";
+        
+        if (!File.Exists(filePath))
+        {
+            Debug.LogError("캡슐 데이터 파일이 존재하지 않습니다: " + filePath);
+            return null;
+        }
 
-        // 전용 카메라 생성
+        // 메시 데이터 로드
+        string jsonData = File.ReadAllText(filePath);
+        ObjectData capsuleData = JsonUtility.FromJson<ObjectData>(jsonData);
+
+        // 메시 생성
+        Mesh mesh = new Mesh();
+        mesh.vertices = capsuleData.vertices;
+        mesh.triangles = capsuleData.triangles;
+        mesh.normals = capsuleData.normals;
+        mesh.uv = capsuleData.uv;
+        mesh.RecalculateBounds();
+
+        // 기본 게임오브젝트 생성
+        GameObject capsule = new GameObject(name);
+
+        ProceduralCapsule procap = capsule.AddComponent<ProceduralCapsule>();
+        
+        procap.subdivisionHeight = capsuleData.subdivisionHeight;
+        procap.subdivisionAround = capsuleData.subdivisionAround;
+        procap.height = capsuleData.height;
+        procap.radius = capsuleData.radius;
+        procap.cylinderDivision = capsuleData.cylinderDivision;
+        procap.topOffest = capsuleData.topOffest;
+        procap.numberOfCylinder = capsuleData.numberOfCylinder;
+        procap.botOffset = capsuleData.botOffset;
+
+
+
+        // Transform 정보 로드 및 적용
+        capsule.transform.position = capsuleData.position;
+        capsule.transform.eulerAngles = capsuleData.rotation;
+        capsule.transform.localScale = capsuleData.scale;
+
+        procap.make();
+
+        return capsule;
+    }
+
+    public void GenerateIcon(GameObject prefab, string iconName)
+    {
+
+        CreateManager.instance.outline.Hideoutline();
+        
+        // 렌더 텍스처 설정
+        RenderTexture renderTexture = new RenderTexture(256, 256, 16, RenderTextureFormat.ARGB32);
+
+        // 임시 카메라 생성
         GameObject cameraObj = new GameObject("IconCamera");
-        Camera iconCamera = cameraObj.AddComponent<Camera>(); // 아이콘을 찍을 카메라
+        Camera iconCamera = cameraObj.AddComponent<Camera>();
 
         // 카메라 설정
-        iconCamera.clearFlags = CameraClearFlags.SolidColor; // 배경 제거
+        iconCamera.clearFlags = CameraClearFlags.SolidColor;
         iconCamera.backgroundColor = Color.clear;
-        iconCamera.orthographic = true;  // 정사각형 렌더링
-        iconCamera.nearClipPlane = 0.1f;
-        iconCamera.farClipPlane = 10f;
+        iconCamera.orthographic = true;
 
-        // **새로운 Light 추가**
-        GameObject lightObj = new GameObject("IconLight");
-        Light iconLight = lightObj.AddComponent<Light>();
-        iconLight.type = LightType.Directional;  // 방향광 (전체를 밝히는 조명)
-        iconLight.intensity = 0.5f;  // 빛의 세기 조정
-        //iconLight.color = Color.white; // 빛 색상
-
-
-        // 프리팹 인스턴스 생성
-        GameObject instance = Instantiate(prefab);
-        instance.transform.position = new Vector3 (100,100,100); // 중앙에 배치
-
-        // 프리팹 크기 측정 후 카메라 위치 조정
-        Bounds bounds = GetBounds(instance);
+        //bound 계산
+        Bounds bounds = GetBounds(prefab);
         float size = Mathf.Max(bounds.size.x, bounds.size.y, bounds.size.z);
 
-        iconCamera.orthographicSize = size * 0.6f;  // 크기 조정 (여백을 남기기 위해 0.6배)
-        /*
-        // 프리팹의 **오른쪽에서 왼쪽을 바라보도록 카메라 배치**
-        iconCamera.transform.position = instance.transform.position + new Vector3(bounds.max.x + size, 0, 0);
-        iconCamera.transform.LookAt(instance.transform.position); // 프리팹 중심을 바라봄
-        */
-        float distance = size * 2.0f;
-        iconCamera.transform.position = bounds.center + new Vector3(-distance, 0, 0);
-        iconCamera.transform.LookAt(bounds.center);
+        iconCamera.nearClipPlane = size * 0.1f;
+        iconCamera.farClipPlane = size * 3f;
+        
 
 
-        // **Light를 카메라 앞에 배치**
+        // 조명 추가
+        GameObject lightObj = new GameObject("IconLight");
+        Light iconLight = lightObj.AddComponent<Light>();
+        iconLight.type = LightType.Directional;
+        iconLight.intensity = 0.5f;
+
+        // 조명을 카메라 위치에 배치
         lightObj.transform.position = iconCamera.transform.position;
         lightObj.transform.rotation = iconCamera.transform.rotation;
         lightObj.transform.parent = iconCamera.transform;
 
-        // 렌더 텍스처 설정
-        RenderTexture renderTexture = new RenderTexture(256, 256, 16, RenderTextureFormat.ARGB32);
-        iconCamera.targetTexture = renderTexture;
+        // 프리팹 크기 계산
+        
+        
+        iconCamera.orthographicSize = size * 0.6f;
 
-        // 카메라 렌더링 실행
+        // 카메라를 오른쪽에서 왼쪽을 바라보도록 배치
+        float distance = size * 2.0f;
+        iconCamera.transform.position = bounds.center + new Vector3(distance, 0, 0);
+        iconCamera.transform.LookAt(bounds.center);
+        Debug.Log(iconCamera.transform.position);
+        Debug.Log(bounds.center);
+
+       
+        
+
+
+
+
+        // 렌더 타겟 설정
+        iconCamera.targetTexture = renderTexture;
+        
         iconCamera.Render();
 
-        // RenderTexture를 Texture2D로 변환
+        // 렌더 텍스처를 텍스처로 변환
         Texture2D iconTexture = new Texture2D(renderTexture.width, renderTexture.height, TextureFormat.RGBA32, false);
         RenderTexture.active = renderTexture;
         iconTexture.ReadPixels(new Rect(0, 0, renderTexture.width, renderTexture.height), 0, 0);
         iconTexture.Apply();
         RenderTexture.active = null;
 
-        // Texture2D를 Sprite로 변환
-        Sprite iconSprite = Sprite.Create(iconTexture, new Rect(0, 0, iconTexture.width, iconTexture.height), new Vector2(0.5f, 0.5f));
-
         // PNG로 저장
-        SaveTextureAsPNG(iconTexture, prefabName);
+        byte[] bytes = iconTexture.EncodeToPNG();
+        string iconPath = iconsPath + iconName + ".png";
+        File.WriteAllBytes(iconPath, bytes);
 
-        // 사용이 끝난 오브젝트 제거
-        Destroy(instance);
+        // 임시 객체 정리
         Destroy(cameraObj);
+        Destroy(lightObj);
         renderTexture.Release();
+
+        Debug.Log("아이콘이 저장되었습니다: " + iconPath);
     }
 
-    // 오브젝트의 전체 크기(Bounds)를 가져오는 함수
+    // 객체의 경계(바운드) 계산
     private Bounds GetBounds(GameObject obj)
     {
+        Bounds bounds = new Bounds(obj.transform.position, Vector3.zero);
         Renderer[] renderers = obj.GetComponentsInChildren<Renderer>();
-        if (renderers.Length == 0) return new Bounds(obj.transform.position, Vector3.zero);
 
-        Bounds bounds = renderers[0].bounds;
-        foreach (Renderer r in renderers)
+        if (renderers.Length > 0)
         {
-            bounds.Encapsulate(r.bounds);
+            bounds = renderers[0].bounds;
+            for (int i = 1; i < renderers.Length; i++)
+            {
+                bounds.Encapsulate(renderers[i].bounds);
+            }
         }
+
         return bounds;
-    }
-
-    void SaveTextureAsPNG(Texture2D texture, string fileName)
-    {
-        //  런타임에서도 접근 가능한 저장 폴더 설정
-        string folderPath;
-
-#if UNITY_EDITOR
-        folderPath = "Assets/CreatureData/CreatureIcon";  // 에디터에서는 기존 경로 유지
-#else
-    folderPath = Path.Combine(Application.persistentDataPath, "CreatureIcon");  // 런타임에서는 저장 가능 경로 사용
-#endif
-
-        if (!Directory.Exists(folderPath))
-        {
-            Directory.CreateDirectory(folderPath);
-        }
-
-        string filePath = Path.Combine(folderPath, fileName + ".png");
-
-        // Texture2D를 PNG로 변환 후 저장
-        byte[] pngData = texture.EncodeToPNG();
-        File.WriteAllBytes(filePath, pngData);
-
-        Debug.Log($"아이콘 저장 완료: {filePath}");
-
-
-
-#if UNITY_EDITOR
-        //  에디터에서만 AssetDatabase 사용
-        AssetDatabase.ImportAsset(filePath);
-        AssetDatabase.Refresh();
-#endif
-
-
     }
 
 

@@ -1910,6 +1910,7 @@ MonoBehaviour:
   PartLayer:
     serializedVersion: 2
     m_Bits: 512
+  targetObject: {fileID: 0}
   lastObjectCilcked: {fileID: 0}
   MainBody: {fileID: 830497230}
   isArrowClicked: 0
@@ -1939,7 +1940,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1468461756}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 77beb64049c8daf4598612fc5b4fa6f4, type: 3}
   m_Name: 

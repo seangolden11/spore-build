@@ -13,7 +13,7 @@ public class CreateManager : MonoBehaviour
     public Outline outline;
     public Transform camerholder;
     public ObjectDataManager objectDataManager;
-    public Light light;
+    
 
     bool isplaymode;
     private void Awake()

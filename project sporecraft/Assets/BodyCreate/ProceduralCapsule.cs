@@ -48,7 +48,8 @@ public class ProceduralCapsule : MonoBehaviour
     
     public void make()
     {
-        meshFilter = gameObject.AddComponent<MeshFilter>();
+        //필요한 정보 subdivisionHeight,subdivisionAround,radius,height,cylinderDivision,topOffest,numberOfCylinder,botOffset
+    meshFilter = gameObject.AddComponent<MeshFilter>();
         
         meshFilter.mesh = CreateCapsuleMesh(subdivisionHeight, subdivisionAround, radius, height);
         mc = gameObject.AddComponent<MeshCollider>();

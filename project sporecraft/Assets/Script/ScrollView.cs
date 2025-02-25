@@ -15,7 +15,7 @@ public class ScrollView : MonoBehaviour
 
     public GameObject uiPrefab;
 
-    public List<GameObject> prefabs = new List<GameObject>();
+    public List<ObjectData> prefabs = new List<ObjectData>();
     public List<Sprite> sprites = new List<Sprite>();
     
     public List<RectTransform> uiObjects = new List<RectTransform>();
@@ -43,35 +43,54 @@ public class ScrollView : MonoBehaviour
 
     public void DataInit()
     {
-        string prefabFolder = "Assets/CreatureData/CreaturePrefabs";
-        string[] guids = AssetDatabase.FindAssets("t:Prefab", new[] { prefabFolder });
+        string prefabFolder = Application.persistentDataPath + "/CreatureData/CreatureMeshs";
+        string iconFolder = Application.persistentDataPath + "/CreatureData/CreatureIcons";
+
         prefabs.Clear();
-
-        for (int i = 0; i < guids.Length; i++)
-        {
-            string path = AssetDatabase.GUIDToAssetPath(guids[i]);
-            prefabs.Add(AssetDatabase.LoadAssetAtPath<GameObject>(path));
-        }
-
-        string iconFolder = "Assets/CreatureData/CreatureIcon";
-        guids = AssetDatabase.FindAssets("t:Texture2D", new[] { iconFolder });
         sprites.Clear();
 
-        for (int i = 0; i < guids.Length; i++)
+        // 런타임일 때 파일 시스템 사용
+        if (Directory.Exists(prefabFolder))
         {
-            string path = AssetDatabase.GUIDToAssetPath(guids[i]);
+            // transform 데이터 파일 경로 가져오기
+            string[] transformFiles = Directory.GetFiles(prefabFolder, "*.json");
             
+            foreach (string file in transformFiles)
+            {
+                //string name = Path.GetFileNameWithoutExtension(file);
+                
+                
+                 // 메시 데이터 로드
+                string jsonData = File.ReadAllText(file);
+                ObjectData capsuleData = JsonUtility.FromJson<ObjectData>(jsonData);
 
-
-            sprites.Add(LoadSpriteFromFile(path));
+                
+                    prefabs.Add(capsuleData);
+        
+            }
+        }
+        
+        if (Directory.Exists(iconFolder))
+        {
+            string[] iconFiles = Directory.GetFiles(iconFolder, "*.png");
+            
+            foreach (string file in iconFiles)
+            {
+                Sprite sprite = LoadSpriteFromFile(file);
+                if (sprite != null)
+                {
+                    sprites.Add(sprite);
+                }
+            }
         }
 
-        for (int i = 0; i<maxSlot; i++)
+        // UI 슬롯 초기화
+        for (int i = 0; i < maxSlot; i++)
         {
             if (prefabs.Count > i)
                 uiObjects[i].GetComponent<DataContent>().Init(prefabs[i], sprites[i]);
             else
-                uiObjects[i].GetComponent<DataContent>().Init(null,null);
+                uiObjects[i].GetComponent<DataContent>().Init(null, null);
         }
     }
 
