@@ -3,6 +3,7 @@ using System.IO;
 using System.Collections.Generic;
 using UnityEngine.UI;
 using System.Text.RegularExpressions;
+using System.Linq;
 
 public class ObjectDataManager : MonoBehaviour
 {
@@ -62,6 +63,16 @@ public class ObjectDataManager : MonoBehaviour
         Mesh mesh = meshFilter.sharedMesh;
         ProceduralCapsule dummycapsule = capsule.GetComponent<ProceduralCapsule>();
 
+        /*
+        Quaternion rotationOffset = Quaternion.Euler(-90f, 0f, 0f);
+
+        // 회전 적용하여 정점 변환
+        Vector3[] worldVertices = mesh.vertices
+            .Select(v => capsule.transform.TransformPoint(v)) // 월드 좌표로 변환
+            .Select(v => rotationOffset * (v - capsule.transform.position) + capsule.transform.position) // -90도 회전 적용
+            .ToArray();
+        */
+        
         // 캡슐 데이터 생성
         ObjectData capsuleData = new ObjectData
         {
@@ -81,7 +92,12 @@ public class ObjectDataManager : MonoBehaviour
             topOffest = dummycapsule.topOffest,
             numberOfCylinder = dummycapsule.numberOfCylinder,
             botOffset = dummycapsule.botOffset,
-};
+            listBonesPos = dummycapsule.listBones.Where(t => t != null).Select(t => t.position).ToList(),
+            listBonesRot = dummycapsule.listBones.Where(t => t != null).Select(t => t.eulerAngles).ToList(),
+            temptransPos = dummycapsule.tempTrans.Where(t => t != null).Select(t => t.position).ToList(),
+            listLocalBones = dummycapsule.listLocalBones,
+            materialNum = CreateManager.instance.materials.FindIndex(f => f == dummycapsule.mat),
+        };
         /*
         // 머테리얼 색상이 있으면 저장
         Renderer renderer = capsule.GetComponent<Renderer>();
@@ -139,6 +155,8 @@ public class ObjectDataManager : MonoBehaviour
 
     public GameObject LoadCapsule(string name)
     {
+        CreateManager.instance.bodyClick.ClickOther();
+
         string filePath = meshesPath + name + ".json";
         
         if (!File.Exists(filePath))
@@ -151,16 +169,35 @@ public class ObjectDataManager : MonoBehaviour
         string jsonData = File.ReadAllText(filePath);
         ObjectData capsuleData = JsonUtility.FromJson<ObjectData>(jsonData);
 
+       
+
+        // 기본 게임오브젝트 생성
+        GameObject capsule = new GameObject(name);
+
+        // Transform 정보 로드 및 적용
+        capsule.transform.position = capsuleData.position;
+        capsule.transform.rotation = Quaternion.Euler(capsuleData.rotation);
+        capsule.transform.localScale = capsuleData.scale;
+
         // 메시 생성
         Mesh mesh = new Mesh();
+        /*
+        Vector3[] vertices = new Vector3[capsuleData.vertices.Length];
+
+        
+        for (int i = 0; i < capsuleData.vertices.Length; i++)
+        {
+            vertices[i] = capsule.transform.InverseTransformPoint(capsuleData.vertices[i]);
+        }
+        mesh.vertices = vertices; 
+        */
+
         mesh.vertices = capsuleData.vertices;
         mesh.triangles = capsuleData.triangles;
         mesh.normals = capsuleData.normals;
         mesh.uv = capsuleData.uv;
         mesh.RecalculateBounds();
-
-        // 기본 게임오브젝트 생성
-        GameObject capsule = new GameObject(name);
+        mesh.RecalculateNormals();
 
         ProceduralCapsule procap = capsule.AddComponent<ProceduralCapsule>();
         
@@ -172,15 +209,21 @@ public class ObjectDataManager : MonoBehaviour
         procap.topOffest = capsuleData.topOffest;
         procap.numberOfCylinder = capsuleData.numberOfCylinder;
         procap.botOffset = capsuleData.botOffset;
+        
+        procap.listLocalBones = capsuleData.listLocalBones;
+        procap.mat = CreateManager.instance.materials[capsuleData.materialNum];
 
 
 
-        // Transform 정보 로드 및 적용
-        capsule.transform.position = capsuleData.position;
-        capsule.transform.eulerAngles = capsuleData.rotation;
-        capsule.transform.localScale = capsuleData.scale;
 
-        procap.make();
+        
+
+        procap.LoadCapsule(mesh, capsuleData.listBonesPos,capsuleData.listBonesRot, capsuleData.temptransPos);
+        //capsule.transform.Rotate(Vector3.right, 90f);
+        
+
+        Destroy(CreateManager.instance.mainBody);
+        CreateManager.instance.mainBody = capsule;
 
         return capsule;
     }
@@ -189,6 +232,7 @@ public class ObjectDataManager : MonoBehaviour
     {
 
         CreateManager.instance.outline.Hideoutline();
+        CreateManager.instance.mainBody.GetComponent<ProceduralCapsule>().otherCilceked();
         
         // 렌더 텍스처 설정
         RenderTexture renderTexture = new RenderTexture(256, 256, 16, RenderTextureFormat.ARGB32);

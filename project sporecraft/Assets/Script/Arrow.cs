@@ -28,6 +28,9 @@ public class Arrow : MonoBehaviour
             Debug.Log("Main camera initialized successfully.");
         }
 
+        if (body == null)
+            body = CreateManager.instance.mainBody;
+
         pC = body.GetComponent<ProceduralCapsule>();
 
         if (transform.name == "TopArrow")

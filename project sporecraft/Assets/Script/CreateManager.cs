@@ -13,6 +13,9 @@ public class CreateManager : MonoBehaviour
     public Outline outline;
     public Transform camerholder;
     public ObjectDataManager objectDataManager;
+    public GameObject bodybone;
+    public GameObject arrow;
+    public List<Material> materials;
     
 
     bool isplaymode;
