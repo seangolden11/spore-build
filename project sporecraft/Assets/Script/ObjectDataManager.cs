@@ -97,6 +97,7 @@ public class ObjectDataManager : MonoBehaviour
             temptransPos = dummycapsule.tempTrans.Where(t => t != null).Select(t => t.position).ToList(),
             listLocalBones = dummycapsule.listLocalBones,
             materialNum = CreateManager.instance.materials.FindIndex(f => f == dummycapsule.mat),
+            
         };
         /*
         // 머테리얼 색상이 있으면 저장
@@ -155,7 +156,7 @@ public class ObjectDataManager : MonoBehaviour
 
     public GameObject LoadCapsule(string name)
     {
-        CreateManager.instance.bodyClick.ClickOther();
+        CreateManager.instance.bodyClick.ResetClick();
 
         string filePath = meshesPath + name + ".json";
         
@@ -169,8 +170,6 @@ public class ObjectDataManager : MonoBehaviour
         string jsonData = File.ReadAllText(filePath);
         ObjectData capsuleData = JsonUtility.FromJson<ObjectData>(jsonData);
 
-       
-
         // 기본 게임오브젝트 생성
         GameObject capsule = new GameObject(name);
 
@@ -181,16 +180,6 @@ public class ObjectDataManager : MonoBehaviour
 
         // 메시 생성
         Mesh mesh = new Mesh();
-        /*
-        Vector3[] vertices = new Vector3[capsuleData.vertices.Length];
-
-        
-        for (int i = 0; i < capsuleData.vertices.Length; i++)
-        {
-            vertices[i] = capsule.transform.InverseTransformPoint(capsuleData.vertices[i]);
-        }
-        mesh.vertices = vertices; 
-        */
 
         mesh.vertices = capsuleData.vertices;
         mesh.triangles = capsuleData.triangles;

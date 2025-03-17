@@ -32,6 +32,7 @@ public class ObjectData
 
     public List<Vector3> temptransPos;
 
+    
 
     public List<Vector3> listLocalBones;
     public int materialNum;

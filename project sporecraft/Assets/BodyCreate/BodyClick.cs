@@ -14,7 +14,7 @@ public class BodyClick : MonoBehaviour
     public GameObject targetObject;
     public GameObject lastObjectCilcked;
     public GameObject MainBody;
-    ProceduralCapsule PC;
+    public ProceduralCapsule PC;
     bool isBoneClicked;
     bool isbodyclicked;
     public bool isArrowClicked;
@@ -170,6 +170,19 @@ public class BodyClick : MonoBehaviour
             
         }
         
+    }
+
+    public void ResetClick()
+    {
+        isbodyclicked = false;
+
+        if (isBoneClicked)
+            lastObjectCilcked.GetComponent<Bone>().enabled = false;
+        isBoneClicked = false;
+        PC.otherCilceked();
+        partPanel.SetActive(false);
+        outline.Hideoutline();
+        return;
     }
 
     private Vector3 GetMouseWorldPos()

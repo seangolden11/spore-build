@@ -85,6 +85,7 @@ public class ProceduralCapsule : MonoBehaviour
     public void LoadCapsule(Mesh mesh, List<Vector3>bonePos, List<Vector3>boneRot, List<Vector3> tempPos)
     {
         //필요한 정보 subdivisionHeight,subdivisionAround,radius,height,cylinderDivision,topOffest,numberOfCylinder,botOffset
+        gameObject.layer = LayerMask.NameToLayer("Body Layer");
         boneCamera = CreateManager.instance.boneCamera;
         meshFilter = gameObject.AddComponent<MeshFilter>();
 
@@ -116,10 +117,12 @@ public class ProceduralCapsule : MonoBehaviour
         GameObject arrow = CreateManager.instance.arrow;
         topArrow = Instantiate(arrow);
         topArrow.transform.parent = transform;
-        topArrow.name = "topArrow";
+        
+        topArrow.name = "TopArrow";
         bottomArrow = Instantiate(arrow);
         bottomArrow.transform.parent = transform;
-        bottomArrow.name = "botArrow";
+       
+        bottomArrow.name = "BottomArrow";
         toparrowSc = topArrow.GetComponent<Arrow>();
         botArrowSc = bottomArrow.GetComponent<Arrow>();
         topArrow.SetActive(false);
