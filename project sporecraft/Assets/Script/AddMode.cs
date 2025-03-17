@@ -21,7 +21,7 @@ public class AddMode : MonoBehaviour
     void Start()
     {
         mainCamera = Camera.main;
-        addmode = false;
+        
         added = false;
         again = false;
         isRotationSim = false;
@@ -31,8 +31,7 @@ public class AddMode : MonoBehaviour
 
     void Update()
     {
-        if (!addmode)
-            return;
+        
         
         Ray ray = mainCamera.ScreenPointToRay(Input.mousePosition);
         RaycastHit hit;
@@ -73,12 +72,14 @@ public class AddMode : MonoBehaviour
         {
             if (!Physics.Raycast(ray, out hit))
             {
-                addmode = false;
-                CreateManager.instance.bodyClick.enabled = true;
+                
+                
                 
                 
                 Destroy(currentObject);
                 Destroy(mirroredObject);
+                CreateManager.instance.bodyClick.enabled = true;
+                this.enabled = false;
                 return;
             }
 
@@ -105,8 +106,9 @@ public class AddMode : MonoBehaviour
             else
             {
 
-                addmode = false;
+                
                 CreateManager.instance.SwitchClickMode();
+                this.enabled = false;
             }
         }
         
@@ -123,10 +125,11 @@ public class AddMode : MonoBehaviour
         mirroredObject = Instantiate(CreateManager.instance.partManager.Parts[partid]);
         mirroredObject.SetActive(false);
         CreateManager.instance.boneCamera.enabled = false;
-        
 
-        addmode = true;
         CreateManager.instance.bodyClick.enabled = false;
+        
+        this.enabled = true;
+        
 
     }
 

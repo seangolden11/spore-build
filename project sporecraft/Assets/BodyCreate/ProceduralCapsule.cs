@@ -44,6 +44,7 @@ public class ProceduralCapsule : MonoBehaviour
     public List<Transform> tempTrans;
     public List<Transform> listBones;
     public List<Vector3> listLocalBones;
+    public List<GameObject> listBodyParts;
 
     
     public void make()
@@ -77,7 +78,7 @@ public class ProceduralCapsule : MonoBehaviour
         botArrowSc = bottomArrow.GetComponent<Arrow>();
         topArrow.SetActive(false);
         bottomArrow.SetActive(false);
-        
+        listBodyParts = new List<GameObject>();
 
 
     }
@@ -127,7 +128,7 @@ public class ProceduralCapsule : MonoBehaviour
         botArrowSc = bottomArrow.GetComponent<Arrow>();
         topArrow.SetActive(false);
         bottomArrow.SetActive(false);
-        
+        listBodyParts = new List<GameObject>();
 
 
     }
@@ -625,105 +626,7 @@ public class ProceduralCapsule : MonoBehaviour
     }
 
 
-    /*void AssignBoneWeights(Mesh mesh, Transform[] bones)
-    {
-        BoneWeight[] weights = new BoneWeight[mesh.vertexCount];
-
-        int topThreshold = ((subdivisionHeight / 2) + 1) * (subdivisionAround + 1);
-        int i;
-
-        // 상단 반구에 가중치 할당
-        for (i = 0; i < topThreshold; i++)
-        {
-            weights[i].boneIndex0 = 0; // 최상단 본
-            weights[i].weight0 = 1;
-        }
-        Debug.Log(i);
-        int count = (int)(cylinderDivision) * (subdivisionAround + 1);
-        int firstcount = (int)(cylinderDivision -1) * (subdivisionAround + 1);
-        // 실린더 부분에 가중치 할당
-        if (numberOfCylinder == 1)
-        {
-            for (int k = 0; k < firstcount; k++, i++)
-            {
-
-                weights[i].boneIndex0 = 0;
-                weights[i].weight0 = 1;
-
-
-            }
-        }
-        if (numberOfCylinder > 1)
-        {
-            
-
-            for (int k = 0; k < firstcount; k++, i++)
-            {
-
-                weights[i].boneIndex0 = 0;
-                weights[i].weight0 = 1;
-
-
-            }
-            for (int j = 1; j < numberOfCylinder; j++)
-            {
-
-                for (int k = 0; k < cylinderDivision; k++)
-                {
-                    List<KeyValuePair<int, float>> boneWeights = new List<KeyValuePair<int, float>>();
-                    Vector3 vertex = vertices[i];
-
-                    // 각 본에 대해 거리를 계산하고 가중치를 할당
-                    for (int l = 0; l < bones.Length; l++)
-                    {
-                        float distance = Vector3.Distance(bones[l].position, vertex) - radius;
-                        boneWeights.Add(new KeyValuePair<int,float>(l,distance)); // 거리가 가까울수록 높은 가중치
-                    }
-
-                    boneWeights.Sort((x, y) => x.Value.CompareTo(y.Value));
-
-                    // 가중치 정규화
-                    float totalWeight = 0.0f;
-                    for(int l=0;l< Mathf.Min(weightrange,boneWeights.Count);l++)
-                    {
-                        totalWeight += boneWeights[l].Value;
-                    }
-                    for (int l = 0; l <= subdivisionAround; l++,i++)
-                    {
-                        // BoneWeight 설정
-                        weights[i].boneIndex0 = boneWeights[0].Key;
-                        weights[i].weight0 = boneWeights[0].Value / totalWeight;
-                        if (bones.Length > 1)
-                        {
-                            weights[i].boneIndex1 = boneWeights[1].Key;
-                            weights[i].weight1 = boneWeights[1].Value / totalWeight;
-                        }
-                        if (bones.Length > 2)
-                        {
-                            weights[i].boneIndex2 = boneWeights[2].Key;
-                            weights[i].weight2 = boneWeights[2].Value / totalWeight;
-                        }
-                        Debug.Log(boneWeights[0].Value/totalWeight);
-                        Debug.Log(boneWeights[1].Value / totalWeight);
-                    }
-                    
-                }
-
-
-            }
-        }
-        Debug.Log(i);
-
-        // 하단 반구에 가중치 할당
-        for (int l =0; l < topThreshold; l++,i++)
-        {
-            weights[i].boneIndex0 = numberOfCylinder-1;
-            weights[i].weight0 = 1;
-        }
-        Debug.Log(i);
-
-        mesh.boneWeights = weights;
-    }*/
+   
 
     void AddHingeJoint(GameObject newBone)
     {
@@ -910,29 +813,21 @@ public class ProceduralCapsule : MonoBehaviour
         return num;
     }
 
-    public (Vector3 closestPos, float deltavalue) GetDeltaValue(Vector3 objPos, int blendshapeindex)
+    public void InitBodyParts()
     {
 
-        int closestIndex = 0;
-        float minDistance = 100;
-        for (int i = 0; i < vertices.Count; i++)
+        UpdateMeshCollider();
+
+        foreach (GameObject o in listBodyParts)
         {
-            float distance = Vector3.Distance(objPos, vertices[i]);
-            if (distance < minDistance)
-            {
-                minDistance = distance;
-                closestIndex = i;
-            }
+            o.GetComponent<BodyPart>().Changed(bakedMesh);
         }
-
-        Vector3[] deltavertices = new Vector3[vertices.Count];
-        Vector3 tempPos = vertices[closestIndex];
-        sRenderer.sharedMesh.GetBlendShapeFrameVertices(blendshapeindex, 0, deltavertices, null, null);
-
-        return (tempPos, deltavertices[closestIndex].x);
     }
 
-   
+    
+
+
+
 
 
 }

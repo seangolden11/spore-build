@@ -38,3 +38,11 @@ public class ObjectData
     public int materialNum;
 
 }
+
+public class BodyPartDataForLoad
+{
+    public int partID;
+    public Vector3 pos;
+    public Vector3 rot;
+    public Vector3 scale;
+}

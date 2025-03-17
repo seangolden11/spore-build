@@ -5,7 +5,7 @@ using UnityEngine;
 
 public class Bone : MonoBehaviour
 {
-    public GameObject mainbody;
+    
     public int bonenum;
     public float blendvalue;
     public float speed = 100f;
@@ -45,7 +45,7 @@ public class Bone : MonoBehaviour
             bonenum = capsule.returnboneint(this.transform);
             capsule.sRenderer.SetBlendShapeWeight(bonenum, blendvalue);
             //capsule.UpdateMeshCollider();
-            ChildPartsTrans(blendvalue);
+            capsule.InitBodyParts();
         }
         else if(wheelinput < 0 && blendvalue > 0)
         {
@@ -54,7 +54,8 @@ public class Bone : MonoBehaviour
             blendvalue += wheelinput * speed;
             bonenum = capsule.returnboneint(this.transform);
             capsule.sRenderer.SetBlendShapeWeight(bonenum, blendvalue);
-            ChildPartsTrans(blendvalue);
+            capsule.InitBodyParts();
+
         }
 
         if (isScrolling && Time.time - lastScrollTime > scrollThreshold)
@@ -64,27 +65,6 @@ public class Bone : MonoBehaviour
             capsule.UpdateMeshCollider();
         }
 
-    }
-
-    public (Vector3 tempPos, float deltaValue) Fussioned(BodyPart temp)
-    {
-        
-        childparts.Add(temp);
-
-        
-        bonenum = capsule.returnboneint(this.transform);
-
-        return capsule.GetDeltaValue(temp.gameObject.transform.position, bonenum);
-        
-        
-    }
-
-    void ChildPartsTrans(float inputvalue)
-    {
-        for(int i = 0; i < childparts.Count; i++)
-        {
-            childparts[i].changed(inputvalue);
-        }
     }
 
     

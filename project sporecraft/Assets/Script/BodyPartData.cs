@@ -13,7 +13,6 @@ public class BodyPartData : ScriptableObject
     public string partName;
     public string partDesc;
     public Sprite partIcon;
-    
-    
+    public GameObject part;
 
 }

@@ -76,23 +76,26 @@ public class BodyPart : MonoBehaviour
             FindNearestBone();
         transform.parent = short_bone.transform;
         targetObject = short_bone.transform.root.gameObject;
-        short_bone.GetComponent<Bone>().Fussioned(this);
+        capsule.GetComponent<ProceduralCapsule>().listBodyParts.Add(gameObject);
+        skRender = capsule.GetComponent<SkinnedMeshRenderer>();
         
         InitTargetMesh();
         
         this.GetComponent<Collider>().enabled = true;
-        if(partData.itemType == BodyPartData.ItemType.eye)
+        /*if(partData.itemType == BodyPartData.ItemType.eye)
         {
             CreateManager.instance.mainBody.GetComponent<EyePos>().AddEyePos(this.transform);
-        }
+        }*/
                     
             
 
     }
 
-    public void changed(float inputvalue)
+    public void Changed(Mesh mesh)
     {
         //vertices = targetObject.GetComponent<MeshFilter>().sharedMesh.vertices;
+
+        bakedMesh = mesh;
 
         InitTargetMesh();
 
@@ -101,8 +104,7 @@ public class BodyPart : MonoBehaviour
 
     void InitTargetMesh()
     {
-        skRender = targetObject.GetComponent<SkinnedMeshRenderer>();
-        skRender.BakeMesh(bakedMesh);
+        
         vertices = bakedMesh.vertices;
         vertexIndex = GetClosetIndex();
     }
@@ -133,4 +135,10 @@ public class BodyPart : MonoBehaviour
         }
     }
     */
+
+    private void OnDestroy()
+    {
+        if(capsule != null)
+            capsule.GetComponent<ProceduralCapsule>().listBodyParts.Remove(gameObject);
+    }
 }
