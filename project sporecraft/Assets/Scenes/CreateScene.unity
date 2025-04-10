@@ -1640,7 +1640,6 @@ MonoBehaviour:
   botOffset: 0
   topArrow: {fileID: 2007351377}
   bottomArrow: {fileID: 77293872}
-  isFirst: 1
   mat: {fileID: 2100000, guid: ed1cfa4f289845740b4f66e2f7bc6234, type: 2}
   meshFilter: {fileID: 0}
   sRenderer: {fileID: 0}
@@ -1650,6 +1649,7 @@ MonoBehaviour:
   tempTrans: []
   listBones: []
   listLocalBones: []
+  listBodyParts: []
 --- !u!114 &830497242
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1863,6 +1863,7 @@ GameObject:
   - component: {fileID: 1468461761}
   - component: {fileID: 1468461762}
   - component: {fileID: 1468461763}
+  - component: {fileID: 1468461764}
   m_Layer: 0
   m_Name: CreateManager
   m_TagString: Untagged
@@ -1912,6 +1913,7 @@ MonoBehaviour:
   targetObject: {fileID: 0}
   lastObjectCilcked: {fileID: 0}
   MainBody: {fileID: 830497230}
+  PC: {fileID: 0}
   isArrowClicked: 0
   partPanel: {fileID: 532039914}
 --- !u!114 &1468461760
@@ -1960,6 +1962,7 @@ MonoBehaviour:
   partManager: {fileID: 598461134}
   bodyClick: {fileID: 1468461759}
   addMode: {fileID: 1468461761}
+  editMode: {fileID: 1468461764}
   boneCamera: {fileID: 231344854}
   mainBody: {fileID: 830497230}
   outline: {fileID: 1468461763}
@@ -1981,6 +1984,23 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b60b26caa8844e94da6349eeb2951b8e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!114 &1468461764
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1468461756}
+  m_Enabled: 0
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 924ee814d71c0c24f8213fc39266ca48, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  currentObject: {fileID: 0}
+  rotationSimilarityThreshold: 20
+  bodyPartLayer:
+    serializedVersion: 2
+    m_Bits: 512
 --- !u!1 &1514638340
 GameObject:
   m_ObjectHideFlags: 0

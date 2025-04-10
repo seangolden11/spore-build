@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using System.Threading.Tasks;
 
 public class CreateManager : MonoBehaviour
 {
@@ -8,6 +9,7 @@ public class CreateManager : MonoBehaviour
     public PartManager partManager;
     public BodyClick bodyClick;
     public AddMode addMode;
+    public EditMode editMode;
     public Camera boneCamera;
     public GameObject mainBody;
     public Outline outline;
@@ -16,6 +18,7 @@ public class CreateManager : MonoBehaviour
     public GameObject bodybone;
     public GameObject arrow;
     public List<Material> materials;
+
     
 
     bool isplaymode;
@@ -29,26 +32,25 @@ public class CreateManager : MonoBehaviour
         mainBody.GetComponent<ProceduralCapsule>().make();
     }
 
-    public void SwitchClickMode()
+    public async void SwitchClickMode(int mode)
     {
-        StartCoroutine(SwitchAfterDelay());
-        
+        await Task.Delay(500); // 밀리초 단위
+
+        switch (mode)
+        {
+            case 1:
+                bodyClick.enabled = true;
+                break;
+            case 2:
+                editMode.enabled = true;
+                break;
+            default:
+                break;
+        }
+
     }
 
-    IEnumerator SwitchAfterDelay()
-    {
-        // 1초 대기
-        yield return new WaitForSeconds(0.5f);
-
-        if (bodyClick.enabled)
-        {
-            bodyClick.enabled = false;
-        }
-        else
-        {
-            bodyClick.enabled = true;
-        }
-    }
+    
 
     public void StartPlay()
     {

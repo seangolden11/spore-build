@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
+using static UnityEngine.GraphicsBuffer;
 
 public class BodyPart : MonoBehaviour
 {
@@ -19,6 +20,7 @@ public class BodyPart : MonoBehaviour
     Vector3[] vertices;
     SkinnedMeshRenderer skRender;
     Mesh bakedMesh;
+    public GameObject mirroredObject;
     
     
     private void Start()
@@ -76,16 +78,14 @@ public class BodyPart : MonoBehaviour
             FindNearestBone();
         transform.parent = short_bone.transform;
         targetObject = short_bone.transform.root.gameObject;
+        //if(capsule.GetComponent<ProceduralCapsule>().listBodyParts.Find(gameObject))
         capsule.GetComponent<ProceduralCapsule>().listBodyParts.Add(gameObject);
         skRender = capsule.GetComponent<SkinnedMeshRenderer>();
         
         InitTargetMesh();
         
         this.GetComponent<Collider>().enabled = true;
-        /*if(partData.itemType == BodyPartData.ItemType.eye)
-        {
-            CreateManager.instance.mainBody.GetComponent<EyePos>().AddEyePos(this.transform);
-        }*/
+        
                     
             
 
@@ -93,7 +93,7 @@ public class BodyPart : MonoBehaviour
 
     public void Changed(Mesh mesh)
     {
-        //vertices = targetObject.GetComponent<MeshFilter>().sharedMesh.vertices;
+        
 
         bakedMesh = mesh;
 
@@ -127,18 +127,31 @@ public class BodyPart : MonoBehaviour
 
         return closestIndex;
     }
-    /*private void OnDestroy()
-    {
-        if (partData.itemType == BodyPartData.ItemType.eye)
-        {
-            CreateManager.instance.mainBody.GetComponent<EyePos>().DeleteEyePos(this.transform);
-        }
-    }
-    */
+    
 
     private void OnDestroy()
     {
         if(capsule != null)
             capsule.GetComponent<ProceduralCapsule>().listBodyParts.Remove(gameObject);
+    }
+
+    public void FindMirroredObject()
+    {
+        Transform mainbody = capsule.transform;
+        Vector3 forward = mainbody.forward;
+
+        foreach (GameObject target in capsule.listBodyParts)
+        {
+            Vector3 dirToTarget = (target.transform.position - mainbody.position).normalized;
+
+            float dot = Vector3.Dot(forward, dirToTarget);
+
+            if (dot < -0.9f) // 거의 정확히 반대 방향
+            {
+                mirroredObject = target;
+                return;
+            }
+        }
+        mirroredObject = null;
     }
 }

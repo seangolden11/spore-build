@@ -90,12 +90,18 @@ public class AddMode : MonoBehaviour
             {
 
                 mirroredObject.GetComponent<BodyPart>().Fussion();
-                
+                mirroredObject.GetComponent<BodyPart>().mirroredObject = currentObject;
+                currentObject.GetComponent<BodyPart>().mirroredObject = mirroredObject;
+
             }
             else
             {
                 Destroy(mirroredObject);
+                currentObject.GetComponent<BodyPart>().mirroredObject = null;
             }
+
+            
+
             if (Input.GetKey(KeyCode.LeftControl))
             {
                 
@@ -107,7 +113,7 @@ public class AddMode : MonoBehaviour
             {
 
                 
-                CreateManager.instance.SwitchClickMode();
+                CreateManager.instance.SwitchClickMode(1);
                 this.enabled = false;
             }
         }

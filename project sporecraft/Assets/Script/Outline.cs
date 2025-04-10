@@ -13,6 +13,8 @@ public class Outline : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
+        //outline = new Material(Shader.Find("Custom/ScreenSpaceOutline"));
+        
         outline = new Material(Shader.Find("Custom/OutlineShader"));
         isShowing = false;
     }

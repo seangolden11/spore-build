@@ -73,6 +73,27 @@ public class BodyClick : MonoBehaviour
 
             foreach (RaycastHit hit in hits)
             {
+                if (((1 << hit.collider.gameObject.layer) & PartLayer) != 0)
+                {
+                    targetObject = hit.collider.gameObject;
+
+
+                    ClickOther();
+
+
+                    partPanel.SetActive(true);
+                    outline.ShowOutline(targetObject);
+                    CreateManager.instance.editMode.currentObject = targetObject;
+                    CreateManager.instance.SwitchClickMode(2);
+                    targetObject = null;
+                    isbuttondown = false;
+                    this.enabled = false;
+                    return;
+                }
+            }
+
+            foreach (RaycastHit hit in hits)
+            {
                 if (((1 << hit.collider.gameObject.layer) & BodyLayer) != 0)
                 {
                     targetObject = hit.collider.gameObject;
@@ -89,22 +110,7 @@ public class BodyClick : MonoBehaviour
                     return;
                 }
             }
-            foreach (RaycastHit hit in hits)
-            {
-                if (((1 << hit.collider.gameObject.layer) & PartLayer) != 0)
-                {
-                    targetObject = hit.collider.gameObject;
-                    
-
-                    ClickOther();
-
-                    
-                    partPanel.SetActive(true);
-                    outline.ShowOutline(targetObject);
-
-                    return;
-                }
-            }
+            
             
 
             ClickOther();

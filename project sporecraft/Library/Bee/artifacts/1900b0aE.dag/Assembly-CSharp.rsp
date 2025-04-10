@@ -410,6 +410,7 @@
 "Assets/Script/Chunk.cs"
 "Assets/Script/CreateManager.cs"
 "Assets/Script/DataContent.cs"
+"Assets/Script/EditMode.cs"
 "Assets/Script/EyePos.cs"
 "Assets/Script/FollowTarget.cs"
 "Assets/Script/FreeCameraLook.cs"
