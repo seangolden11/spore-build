@@ -61,7 +61,7 @@ public class BodyClick : MonoBehaviour
                     offset = targetObject.transform.position - GetMouseWorldPos();
                     
                     ClickOther();
-                    PC.Cilcked();
+                    PC.BoneCilceked();
                     isBoneClicked = true;
                     targetObject.GetComponent<Bone>().enabled = true;
                     partPanel.SetActive(true);

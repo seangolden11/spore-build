@@ -10,7 +10,7 @@ public class CreateManager : MonoBehaviour
     public BodyClick bodyClick;
     public AddMode addMode;
     public EditMode editMode;
-    public Camera boneCamera;
+    
     public GameObject mainBody;
     public Outline outline;
     public Transform camerholder;
@@ -58,7 +58,7 @@ public class CreateManager : MonoBehaviour
             return;
         bodyClick.enabled=false;
         addMode.enabled=false;
-        boneCamera.enabled=false;
+        
         camerholder.transform.parent = CreateManager.instance.mainBody.GetComponent<EyePos>().Eyepos[0];
         camerholder.transform.localPosition = Vector3.zero;
         camerholder.GetComponent<MoveCamera>().ChangeToPlay();

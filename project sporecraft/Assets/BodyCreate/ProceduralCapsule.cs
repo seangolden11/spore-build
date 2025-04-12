@@ -38,7 +38,7 @@ public class ProceduralCapsule : MonoBehaviour
     int threshold;
     Arrow toparrowSc;
     Arrow botArrowSc;
-    public Camera boneCamera;
+    
 
 
     public List<Transform> tempTrans;
@@ -87,7 +87,7 @@ public class ProceduralCapsule : MonoBehaviour
     {
         //필요한 정보 subdivisionHeight,subdivisionAround,radius,height,cylinderDivision,topOffest,numberOfCylinder,botOffset
         gameObject.layer = LayerMask.NameToLayer("Body Layer");
-        boneCamera = CreateManager.instance.boneCamera;
+        
         meshFilter = gameObject.AddComponent<MeshFilter>();
 
         meshFilter.mesh = mesh;
@@ -791,16 +791,26 @@ public class ProceduralCapsule : MonoBehaviour
 
     public void Cilcked()
     {
-        boneCamera.enabled = true;
+
+        sRenderer.material.renderQueue = 2000;
         topArrow.SetActive(true);
         bottomArrow.SetActive(true);
+    }
+
+    public void BoneCilceked()
+    {
+        
+        sRenderer.material.renderQueue = 1998;
+        topArrow.SetActive(true);
+        bottomArrow.SetActive(true);
+
     }
 
     public void otherCilceked()
     {
         if (toparrowSc.isclicked || botArrowSc.isclicked)
             return;
-        boneCamera.enabled = false;
+        sRenderer.material.renderQueue = 2002;
         bottomArrow.SetActive(false);
         topArrow.SetActive(false);
     }

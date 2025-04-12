@@ -3,7 +3,7 @@ using UnityEngine;
 public class AddMode : MonoBehaviour
 {
     private Camera mainCamera;
-    private bool isDragging = false;
+   
     private Vector3 offset;
     GameObject currentObject;
     GameObject mirroredObject;
@@ -130,7 +130,7 @@ public class AddMode : MonoBehaviour
         currentObject = Instantiate(CreateManager.instance.partManager.Parts[partid]);
         mirroredObject = Instantiate(CreateManager.instance.partManager.Parts[partid]);
         mirroredObject.SetActive(false);
-        CreateManager.instance.boneCamera.enabled = false;
+        
 
         CreateManager.instance.bodyClick.enabled = false;
         

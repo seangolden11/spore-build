@@ -4,7 +4,7 @@ public class EditMode : MonoBehaviour
 {
     
     private Camera mainCamera;
-    private bool isDragging = false;
+   
     private Vector3 offset;
     public GameObject currentObject;
     GameObject mirroredObject;
