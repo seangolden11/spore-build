@@ -414,6 +414,8 @@
 "Assets/Script/EyePos.cs"
 "Assets/Script/FollowTarget.cs"
 "Assets/Script/FreeCameraLook.cs"
+"Assets/Script/GameManager.cs"
+"Assets/Script/MaterialManager.cs"
 "Assets/Script/MoveCamera.cs"
 "Assets/Script/Noise.cs"
 "Assets/Script/ObjectData.cs"

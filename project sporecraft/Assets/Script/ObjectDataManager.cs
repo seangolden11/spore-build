@@ -96,7 +96,7 @@ public class ObjectDataManager : MonoBehaviour
             listBonesRot = dummycapsule.listBones.Where(t => t != null).Select(t => t.eulerAngles).ToList(),
             temptransPos = dummycapsule.tempTrans.Where(t => t != null).Select(t => t.position).ToList(),
             listLocalBones = dummycapsule.listLocalBones,
-            materialNum = CreateManager.instance.materials.FindIndex(f => f == dummycapsule.mat),
+            materialNum = MaterialManager.instance.materials.FindIndex(f => f == dummycapsule.mat),
             
         };
         /*
@@ -156,7 +156,8 @@ public class ObjectDataManager : MonoBehaviour
 
     public GameObject LoadCapsule(string name)
     {
-        CreateManager.instance.bodyClick.ResetClick();
+        if (CreateManager.instance != null)
+            CreateManager.instance.bodyClick.ResetClick();
 
         string filePath = meshesPath + name + ".json";
         
@@ -200,7 +201,9 @@ public class ObjectDataManager : MonoBehaviour
         procap.botOffset = capsuleData.botOffset;
         
         procap.listLocalBones = capsuleData.listLocalBones;
-        procap.mat = CreateManager.instance.materials[capsuleData.materialNum];
+
+        
+        procap.mat = MaterialManager.instance.materials[capsuleData.materialNum];
 
 
 
@@ -208,11 +211,19 @@ public class ObjectDataManager : MonoBehaviour
         
 
         procap.LoadCapsule(mesh, capsuleData.listBonesPos,capsuleData.listBonesRot, capsuleData.temptransPos);
-        //capsule.transform.Rotate(Vector3.right, 90f);
-        
 
-        Destroy(CreateManager.instance.mainBody);
-        CreateManager.instance.mainBody = capsule;
+        capsule.AddComponent<Player>();
+        
+        if (CreateManager.instance != null)
+        {
+            Destroy(CreateManager.instance.mainBody);
+            CreateManager.instance.mainBody = capsule;
+        }
+        else if(GameManager.instance != null)
+        {
+            GameManager.instance.mainBody = capsule;
+        }
+        
 
         return capsule;
     }

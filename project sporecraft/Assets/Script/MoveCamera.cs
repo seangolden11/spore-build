@@ -74,6 +74,7 @@ public class MoveCamera : MonoBehaviour
 
     public void ChangeToPlay()
     {
+        /*
         Transform[] childTrans = GetComponentsInChildren<Transform>(); 
         foreach (Transform t in childTrans) {
             ElementPos.Add(t.localPosition);
@@ -81,7 +82,9 @@ public class MoveCamera : MonoBehaviour
         }
         this.transform.rotation = Quaternion.identity;
         this.transform.Rotate(0, 90, 0);
-        this.GetComponent<PlayCamer>().enabled = true;
+        */
+        this.GetComponent<PlayCamer>().SetCamera();
+
         this.enabled = false;
 
     }

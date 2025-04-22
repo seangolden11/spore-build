@@ -23,7 +23,8 @@ uniform float4 _OutlineColor;
 
 v2f vert(appdata v) {
     v2f o;
-    v.vertex.xyz += v.normal * _Outline;
+    float3 worldNormal = UnityObjectToWorldNormal(v.normal);
+v.vertex.xyz += worldNormal * _Outline;
     o.pos = UnityObjectToClipPos(v.vertex);
     o.color = _OutlineColor;
     return o;

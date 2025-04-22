@@ -35,7 +35,11 @@ public class BodyClick : MonoBehaviour
 
     void Update()
     {
-        if (Input.GetMouseButtonDown(0) && !EventSystem.current.IsPointerOverGameObject())
+        if (Input.GetMouseButtonDown(0) && EventSystem.current.IsPointerOverGameObject())
+        {
+            ResetClick();
+        }
+        else if (Input.GetMouseButtonDown(0) && !EventSystem.current.IsPointerOverGameObject())
         {
             if (isbuttondown)
                 return;

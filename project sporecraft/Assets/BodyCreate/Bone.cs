@@ -22,16 +22,24 @@ public class Bone : MonoBehaviour
         wheelinput = 0;
         childparts = new List<BodyPart>();
         blendvalue = 0f;
-        capsule = CreateManager.instance.mainBody.GetComponent<ProceduralCapsule>();
-        //Mesh mesh = GetComponentInChildren<MeshFilter>().mesh;
-        //MeshNormalAverage(mesh);
-        //GetComponentInChildren<MeshFilter>().mesh = mesh;
+        
+        
         this.enabled = false;
+    }
+
+    void GetCapsule()
+    {
+        if (CreateManager.instance != null)
+            capsule = CreateManager.instance.mainBody.GetComponent<ProceduralCapsule>();
+        else
+        {
+            capsule = GameManager.instance.mainBody.GetComponent<ProceduralCapsule>();
+        }
     }
 
     private void OnEnable()
     {
-        capsule = CreateManager.instance.mainBody.GetComponent<ProceduralCapsule>();
+        GetCapsule();
     }
 
     private void Update()

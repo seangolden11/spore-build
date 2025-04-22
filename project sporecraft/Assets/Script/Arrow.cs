@@ -29,7 +29,13 @@ public class Arrow : MonoBehaviour
         }
 
         if (body == null)
-            body = CreateManager.instance.mainBody;
+        {
+            if (CreateManager.instance != null)
+                body = CreateManager.instance.mainBody;
+            else if(GameManager.instance != null)
+                body = GameManager.instance.mainBody;
+        }
+            
 
         pC = body.GetComponent<ProceduralCapsule>();
 
@@ -46,7 +52,10 @@ public class Arrow : MonoBehaviour
     private void OnEnable()
     {
         if (cameraTrans == null)
-            cameraTrans = CreateManager.instance.camerholder;
+            if (CreateManager.instance != null)
+                cameraTrans = CreateManager.instance.camerholder;
+            else if (GameManager.instance != null)
+                cameraTrans = GameManager.instance.cameraHolder;
     }
 
     private void OnMouseDown()

@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using static UnityEngine.GraphicsBuffer;
 
 public class PlayCamer : MonoBehaviour
 {
@@ -12,10 +13,10 @@ public class PlayCamer : MonoBehaviour
     void Start()
     {
         
-        // 시작할 때 마우스 커서를 잠금 상태로 설정
-        Cursor.lockState = CursorLockMode.Locked;
-        playerHead = CreateManager.instance.mainBody.transform;
-        eyePos = CreateManager.instance.mainBody.GetComponent<EyePos>().Eyepos[0];
+        
+        
+        
+        //eyePos = CreateManager.instance.mainBody.GetComponent<EyePos>().Eyepos[0];
     }
 
     // Update is called once per frame
@@ -42,6 +43,55 @@ public class PlayCamer : MonoBehaviour
         if (Input.GetKeyDown(KeyCode.Escape))
         {
             Cursor.lockState = CursorLockMode.None;
+        }
+    }
+
+
+    public float heightMultiplier = 1.5f;
+    public float distanceMultiplier = 2.5f;
+    public float smoothSpeed = 5f;
+    Vector3 offset;
+
+    public void SetCamera()
+    {
+        this.enabled = true;
+        if(CreateManager.instance != null)
+            playerHead = CreateManager.instance.mainBody.transform;
+        else if (GameManager.instance != null)
+            playerHead = GameManager.instance.mainBody.transform;
+
+        Cursor.lockState = CursorLockMode.Locked; // 시작할 때 마우스 커서를 잠금 상태로 설정
+        // 타겟 기준으로 오프셋 위치 계산
+        Vector3 desiredPosition = playerHead.position + playerHead.TransformDirection(offset);
+        Vector3 smoothedPosition = Vector3.Lerp(transform.position, desiredPosition, smoothSpeed * Time.deltaTime);
+
+        transform.position = smoothedPosition;
+
+        // 항상 타겟 바라보기
+        transform.LookAt(playerHead);
+
+        transform.parent = playerHead;
+    }
+
+    void CalculateOffset()
+    {
+        // 플레이어의 크기 측정
+        Renderer renderer = playerHead.GetComponentInChildren<Renderer>();
+        if (renderer != null)
+        {
+            Bounds bounds = renderer.bounds;
+            float height = bounds.size.y;
+
+            // 크기에 따라 offset 자동 조정
+            float heightOffset = height * heightMultiplier;
+            float backOffset = height * distanceMultiplier;
+
+            offset = new Vector3(0, heightOffset, -backOffset);
+        }
+        else
+        {
+            // 기본 fallback
+            offset = new Vector3(0, 2, -5);
         }
     }
 }

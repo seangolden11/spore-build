@@ -17,7 +17,7 @@ public class CreateManager : MonoBehaviour
     public ObjectDataManager objectDataManager;
     public GameObject bodybone;
     public GameObject arrow;
-    public List<Material> materials;
+    
 
     
 
@@ -59,8 +59,8 @@ public class CreateManager : MonoBehaviour
         bodyClick.enabled=false;
         addMode.enabled=false;
         
-        camerholder.transform.parent = CreateManager.instance.mainBody.GetComponent<EyePos>().Eyepos[0];
-        camerholder.transform.localPosition = Vector3.zero;
+        //camerholder.transform.parent = CreateManager.instance.mainBody.GetComponent<EyePos>().Eyepos[0];
+        
         camerholder.GetComponent<MoveCamera>().ChangeToPlay();
         mainBody.GetComponent<Player>().enabled = true;
         mainBody.GetComponent<Player>().enterplaymode();

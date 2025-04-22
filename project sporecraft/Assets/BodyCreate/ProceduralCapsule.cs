@@ -115,7 +115,7 @@ public class ProceduralCapsule : MonoBehaviour
         
         
 
-        GameObject arrow = CreateManager.instance.arrow;
+        GameObject arrow = MaterialManager.instance.prefabs[1];
         topArrow = Instantiate(arrow);
         topArrow.transform.parent = transform;
         
@@ -137,7 +137,7 @@ public class ProceduralCapsule : MonoBehaviour
     {
         int i = 0;
         if (bone == null)
-            bone = CreateManager.instance.bodybone;
+            bone = MaterialManager.instance.prefabs[0];
         listBones = new List<Transform>();
         tempTrans = new List<Transform>();
         foreach (Vector3 p in bonePos)
@@ -809,6 +809,8 @@ public class ProceduralCapsule : MonoBehaviour
     public void otherCilceked()
     {
         if (toparrowSc.isclicked || botArrowSc.isclicked)
+            return;
+        if (sRenderer == null)
             return;
         sRenderer.material.renderQueue = 2002;
         bottomArrow.SetActive(false);

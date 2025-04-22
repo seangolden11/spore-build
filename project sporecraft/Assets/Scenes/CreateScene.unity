@@ -1489,6 +1489,9 @@ MonoBehaviour:
   playerHead: {fileID: 0}
   sensitivity: 100
   eyePos: {fileID: 0}
+  heightMultiplier: 1.5
+  distanceMultiplier: 2.5
+  smoothSpeed: 5
 --- !u!1 &830497230
 GameObject:
   m_ObjectHideFlags: 0
@@ -1770,6 +1773,7 @@ GameObject:
   - component: {fileID: 1468461762}
   - component: {fileID: 1468461763}
   - component: {fileID: 1468461764}
+  - component: {fileID: 1468461765}
   m_Layer: 0
   m_Name: CreateManager
   m_TagString: Untagged
@@ -1875,8 +1879,6 @@ MonoBehaviour:
   objectDataManager: {fileID: 1332056095}
   bodybone: {fileID: 8636503810686903499, guid: e35276143e450cc4e989e11c31948c84, type: 3}
   arrow: {fileID: 7435014948912984981, guid: 4ab2be2eb80062f409bdddd360fe4b1d, type: 3}
-  materials:
-  - {fileID: 2100000, guid: b6732caa3ee73a34f8641f61c063555b, type: 2}
 --- !u!114 &1468461763
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1908,6 +1910,23 @@ MonoBehaviour:
   bodyPartLayer:
     serializedVersion: 2
     m_Bits: 512
+--- !u!114 &1468461765
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1468461756}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 99fad289f1bfd2a4ebcbf5d168a6f13b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  materials:
+  - {fileID: 2100000, guid: 7b7a687216da8614da468a7166a5b34b, type: 2}
+  prefabs:
+  - {fileID: 8636503810686903499, guid: e35276143e450cc4e989e11c31948c84, type: 3}
+  - {fileID: 7435014948912984981, guid: 4ab2be2eb80062f409bdddd360fe4b1d, type: 3}
 --- !u!1 &1514638340
 GameObject:
   m_ObjectHideFlags: 0

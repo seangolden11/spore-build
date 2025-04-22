@@ -11,6 +11,7 @@ public class Chunk
     MeshRenderer meshrenderer;
     MeshFilter meshfilter;
 
+    MeshCollider meshCollider;
 
     int vertexIndex = 0;
     List<Vector3> vertices = new List<Vector3>();
@@ -28,6 +29,8 @@ public class Chunk
         meshfilter = chunkObject.AddComponent<MeshFilter>();
         meshrenderer = chunkObject.AddComponent<MeshRenderer>();
 
+        meshCollider = chunkObject.AddComponent <MeshCollider>();
+
         meshrenderer.material = world.material;
         chunkObject.transform.SetParent(world.transform);
         chunkObject.transform.position = new Vector3(coord.x * VoxelData.ChunkWidth, 0f, coord.z * VoxelData.ChunkWidth);
@@ -37,7 +40,7 @@ public class Chunk
         CreateMeshData();
         CreateMesh();
 
-
+        meshCollider.sharedMesh = meshfilter.mesh;
         
     }
 
