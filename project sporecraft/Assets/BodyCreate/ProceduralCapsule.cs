@@ -218,7 +218,7 @@ public class ProceduralCapsule : MonoBehaviour
             for (int i = 0; i < topThreshold; i++)
             {
                 Vector3 tempVector3 = vertices[i];
-                tempVector3.y += liftAmount; // liftAmount 만큼 y좌표 증가
+                tempVector3.x += liftAmount; // liftAmount 만큼 y좌표 증가
                 vertices[i] = tempVector3;
             }
 
@@ -230,7 +230,7 @@ public class ProceduralCapsule : MonoBehaviour
                     float theta = 2 * Mathf.PI * j / subdivisionAround;
                     float x = radius * Mathf.Cos(theta);
                     float z = radius * Mathf.Sin(theta);
-                    vertices.Insert(++topThreshold - 1, new Vector3(x, y, z));
+                    vertices.Insert(++topThreshold - 1, new Vector3(y, x, z));
                 }
             }
 
@@ -246,7 +246,7 @@ public class ProceduralCapsule : MonoBehaviour
             meshFilter.mesh = mesh; // 메쉬 변경사항 적용
 
             Vector3 newVector = Vector3.zero;
-            newVector.y += topOffest;
+            newVector.x += topOffest;
             
             CreateBones(1, newVector);
         }
@@ -259,7 +259,7 @@ public class ProceduralCapsule : MonoBehaviour
             for (int i = 0; i < topThreshold; i++)
             {
                 Vector3 tempVector3 = vertices[i];
-                tempVector3.y -= liftAmount; // liftAmount 만큼 y좌표 감소
+                tempVector3.x -= liftAmount; // liftAmount 만큼 x좌표 감소
                 vertices[i] = tempVector3;
             }
 
@@ -296,7 +296,7 @@ public class ProceduralCapsule : MonoBehaviour
             for (int i = botThreshold; i < mesh.vertexCount; i++)
             {
                 Vector3 tempVector3 = vertices[i];
-                tempVector3.y -= liftAmount; // liftAmount 만큼 y좌표 감소
+                tempVector3.x -= liftAmount; // liftAmount 만큼 x좌표 감소
                 vertices[i] = tempVector3;
             }
 
@@ -308,7 +308,7 @@ public class ProceduralCapsule : MonoBehaviour
                     float theta = 2 * Mathf.PI * j / subdivisionAround;
                     float x = radius * Mathf.Cos(theta);
                     float z = radius * Mathf.Sin(theta);
-                    vertices.Insert(++botThreshold - 1, new Vector3(x, y, z));
+                    vertices.Insert(++botThreshold - 1, new Vector3(y, x, z));
                 }
             }
 
@@ -325,7 +325,7 @@ public class ProceduralCapsule : MonoBehaviour
             meshFilter.mesh = mesh; // 메쉬 변경사항 적용
 
             Vector3 newVector = Vector3.zero;
-            newVector.y += botOffset;
+            newVector.x += botOffset;
             CreateBones(3, newVector);
         }
 
@@ -338,7 +338,7 @@ public class ProceduralCapsule : MonoBehaviour
             for (int i = botThreshold; i < mesh.vertexCount; i++)
             {
                 Vector3 tempVector3 = vertices[i];
-                tempVector3.y += liftAmount; // liftAmount 만큼 y좌표 감소
+                tempVector3.x += liftAmount; // liftAmount 만큼 x좌표 감소
                 vertices[i] = tempVector3;
             }
 
@@ -377,13 +377,15 @@ public class ProceduralCapsule : MonoBehaviour
                 int current = i * (subdivisionAround + 1) + j;
                 int next = current + subdivisionAround + 1;
 
+                // 첫 번째 삼각형 - 순서 반전
                 tempTriangles.Add(current);
-                tempTriangles.Add(current + 1);
                 tempTriangles.Add(next);
+                tempTriangles.Add(current + 1);
 
+                // 두 번째 삼각형 - 순서 반전
                 tempTriangles.Add(current + 1);
-                tempTriangles.Add(next + 1);
                 tempTriangles.Add(next);
+                tempTriangles.Add(next + 1);
             }
         }
 
@@ -407,7 +409,7 @@ public class ProceduralCapsule : MonoBehaviour
                 float x = radius * Mathf.Sin(phi) * Mathf.Cos(theta);
                 float y = radius * Mathf.Cos(phi) + height / 2;
                 float z = radius * Mathf.Sin(phi) * Mathf.Sin(theta);
-                vertices.Add(new Vector3(x, y, z));
+                vertices.Add(new Vector3(y, x, z));
                 
                 
             }
@@ -423,7 +425,7 @@ public class ProceduralCapsule : MonoBehaviour
                 float theta = 2 * Mathf.PI * j / horizontalSubdivisions;
                 float x = radius * Mathf.Cos(theta);
                 float z = radius * Mathf.Sin(theta);
-                vertices.Add(new Vector3(x, y, z));
+                vertices.Add(new Vector3(y, x, z));
                 
             }
         }
@@ -441,7 +443,7 @@ public class ProceduralCapsule : MonoBehaviour
                 float x = radius * Mathf.Sin(phi) * Mathf.Cos(theta);
                 float y = radius * Mathf.Cos(phi) - (height / 2);
                 float z = radius * Mathf.Sin(phi) * Mathf.Sin(theta);
-                vertices.Add(new Vector3(x, y, z));
+                vertices.Add(new Vector3(y, x, z));
                 
             }
         }
@@ -456,16 +458,19 @@ public class ProceduralCapsule : MonoBehaviour
                 int current = i * (horizontalSubdivisions + 1) + j;
                 int next = current + horizontalSubdivisions + 1;
 
+                // 첫 번째 삼각형 - 순서 반전
                 triangles.Add(current);
-                triangles.Add(current + 1);
                 triangles.Add(next);
+                triangles.Add(current + 1);
 
+                // 두 번째 삼각형 - 순서 반전
                 triangles.Add(current + 1);
-                triangles.Add(next + 1);
                 triangles.Add(next);
-                
+                triangles.Add(next + 1);
+
             }
         }
+
         
        
 
@@ -542,9 +547,10 @@ public class ProceduralCapsule : MonoBehaviour
                 {
                     AddHingeJoint(newBone);
 
-                    newBone.transform.position = bottomBone.transform.position + (2 * bottomBone.transform.TransformDirection(Vector3.down));
+                    newBone.transform.position = bottomBone.transform.position + (2 * bottomBone.transform.TransformDirection(Vector3.left));
                     newBone.transform.rotation = bottomBone.transform.rotation;
                     newBone.GetComponent<HingeJoint>().connectedBody = bottomBone.GetComponent<Rigidbody>();
+                    
 
                     bottomBone = newBone;
                 }
@@ -566,9 +572,10 @@ public class ProceduralCapsule : MonoBehaviour
                     AddHingeJoint(topBone);
                     
 
-                    newBone.transform.position =  topBone.transform.position + (2*topBone.transform.TransformDirection(Vector3.up));
+                    newBone.transform.position =  topBone.transform.position + (2*topBone.transform.TransformDirection(Vector3.right));
                     newBone.transform.rotation = topBone.transform.rotation;
                     topBone.GetComponent<HingeJoint>().connectedBody = newBone.GetComponent<Rigidbody>();
+                    
                     topBone = newBone;
                      
 
@@ -632,7 +639,7 @@ public class ProceduralCapsule : MonoBehaviour
     {
         // HingeJoint 추가
         HingeJoint hinge = newBone.AddComponent<HingeJoint>();
-        hinge.axis = Vector3.zero;  // 회전 축 설정
+        hinge.axis = Vector3.forward * 90;  // 회전 축 설정
         hinge.useLimits = true;  // 회전 제한 사용 설정
         JointLimits limits = new JointLimits();
         limits.min = -30.0f;
@@ -749,8 +756,8 @@ public class ProceduralCapsule : MonoBehaviour
                     
 
                     deltaVertices[i] = vertex;
-                    deltaVertices[i].x *= (blendWeights[0].Value/totalWeight);
-                    deltaVertices[i].y = 0;
+                    deltaVertices[i].y *= (blendWeights[0].Value/totalWeight);
+                    deltaVertices[i].x = 0;
                     deltaVertices[i].z *= (blendWeights[0].Value / totalWeight);
                 }
                 else if(numberOfCylinder > 1)
@@ -762,8 +769,8 @@ public class ProceduralCapsule : MonoBehaviour
                         if (blendWeights[z].Key == j)
                         {
                             deltaVertices[i] = vertex;
-                            deltaVertices[i].x *= (blendWeights[z].Value / totalWeight);
-                            deltaVertices[i].y = 0;
+                            deltaVertices[i].y *= (blendWeights[z].Value / totalWeight);
+                            deltaVertices[i].x = 0;
                             deltaVertices[i].z *= (blendWeights[z].Value / totalWeight);
                             break;
                         }

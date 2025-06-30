@@ -212,7 +212,7 @@ public class ObjectDataManager : MonoBehaviour
 
         procap.LoadCapsule(mesh, capsuleData.listBonesPos,capsuleData.listBonesRot, capsuleData.temptransPos);
 
-        capsule.AddComponent<Player>();
+        capsule.AddComponent<Player>().enabled = false;
         
         if (CreateManager.instance != null)
         {

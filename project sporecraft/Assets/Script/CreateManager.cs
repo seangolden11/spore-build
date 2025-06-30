@@ -62,7 +62,7 @@ public class CreateManager : MonoBehaviour
         //camerholder.transform.parent = CreateManager.instance.mainBody.GetComponent<EyePos>().Eyepos[0];
         
         camerholder.GetComponent<MoveCamera>().ChangeToPlay();
-        mainBody.GetComponent<Player>().enabled = true;
+        
         mainBody.GetComponent<Player>().enterplaymode();
         isplaymode=true;
     }

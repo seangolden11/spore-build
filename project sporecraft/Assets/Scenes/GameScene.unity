@@ -182,6 +182,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   materials:
   - {fileID: 2100000, guid: 7b7a687216da8614da468a7166a5b34b, type: 2}
+  - {fileID: 2100000, guid: b6732caa3ee73a34f8641f61c063555b, type: 2}
   prefabs:
   - {fileID: 8636503810686903499, guid: e35276143e450cc4e989e11c31948c84, type: 3}
   - {fileID: 7435014948912984981, guid: 4ab2be2eb80062f409bdddd360fe4b1d, type: 3}
@@ -571,12 +572,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 711e17bb86ccbf14d9f27cd8c84f4648, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  playerHead: {fileID: 0}
-  sensitivity: 100
-  eyePos: {fileID: 0}
-  heightMultiplier: 1.5
-  distanceMultiplier: 2.5
-  smoothSpeed: 5
+  player: {fileID: 0}
+  distance: 3
+  heightOffset: 1.5
+  mouseSensitivity: 2
+  minPitch: -30
+  maxPitch: 60
 --- !u!1 &1573810767
 GameObject:
   m_ObjectHideFlags: 0

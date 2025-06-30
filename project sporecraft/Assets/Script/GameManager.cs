@@ -23,6 +23,7 @@ public class GameManager : MonoBehaviour
         mainCamera = Camera.main;
         mainCamera.GetComponent<PlayCamer>().SetCamera();
         world.player = mainBody.transform;
+        mainBody.GetComponent<Player>().enterplaymode();
     }
 
     // Update is called once per frame

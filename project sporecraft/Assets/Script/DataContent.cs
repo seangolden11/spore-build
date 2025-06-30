@@ -1,3 +1,4 @@
+using System.Text.RegularExpressions;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -13,6 +14,7 @@ public class DataContent : MonoBehaviour
     public GameObject nameinputfield;
     public InputField namefield;
     public ScrollView scrollView;
+    public BodyClick bk;
     string myname;
     void Awake()
     {
@@ -20,6 +22,14 @@ public class DataContent : MonoBehaviour
         icon = GetComponentsInChildren<Image>()[1];
         dataManager = CreateManager.instance.objectDataManager;
         scrollView = GetComponentInParent<ScrollView>();
+        if (CreateManager.instance != null)
+        {
+            bk = CreateManager.instance.bodyClick;
+        }
+        else if (GameManager.instance != null)
+        {
+            
+        }
     }
 
     public void Init(ObjectData prefabData, Sprite newSprite)
@@ -48,6 +58,7 @@ public class DataContent : MonoBehaviour
     public void Setname()
     {
         myname = namefield.text;
+        bk.ResetClick();
         dataManager.SaveCapsule(myname);
         scrollView.DataInit();
         nameinputfield.SetActive(false);
@@ -60,6 +71,7 @@ public class DataContent : MonoBehaviour
 
     public void Loadbutton()
     {
+        bk.ResetClick();
         dataManager.LoadCapsule(myname);
     }
 

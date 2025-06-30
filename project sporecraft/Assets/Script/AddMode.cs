@@ -156,9 +156,9 @@ public class AddMode : MonoBehaviour
         // 월드 좌표를 로컬 좌표로 변환
         Vector3 localPosition = hit.transform.InverseTransformPoint(position);
 
-        // 로컬 좌표에서 X 축을 기준으로 대칭
+        // 로컬 좌표에서 z 축을 기준으로 대칭
         
-        localPosition.x = -localPosition.x;
+        localPosition.z = -localPosition.z;
 
 
         // 대칭된 로컬 좌표를 다시 월드 좌표로 변환
@@ -173,8 +173,8 @@ public class AddMode : MonoBehaviour
 
         // X 축을 기준으로 대칭 회전 생성
         Vector3 localEulerAngles = localRotation.eulerAngles;
+        localEulerAngles.x = -localEulerAngles.x;
         localEulerAngles.y = -localEulerAngles.y;
-        localEulerAngles.z = -localEulerAngles.z;
 
         // 로컬 회전을 다시 월드 회전으로 변환
         Quaternion mirroredLocalRotation = Quaternion.Euler(localEulerAngles);

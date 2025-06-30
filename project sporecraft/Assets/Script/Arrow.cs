@@ -91,24 +91,25 @@ public class Arrow : MonoBehaviour
                     {
                         if (dragDir.x > 0)
                         {
-                            pC.AppendCapsule(1);
-                            
+                            pC.AppendCapsule(2);
+
                         }
                         else
                         {
-                            pC.AppendCapsule(2);
-
+                            
+                            pC.AppendCapsule(1);
                         }
                     }
                     else if (topOrBottom == 2)
                     {
                         if (dragDir.x < 0)
                         {
-                            pC.AppendCapsule(3);
+                            pC.AppendCapsule(4);
                         }
                         else
                         {
-                            pC.AppendCapsule(4);
+                            
+                            pC.AppendCapsule(3);
                         }
                     }
                 }
@@ -182,8 +183,8 @@ public class Arrow : MonoBehaviour
             if(pC.topBone != null)
             {
 
-                transform.position = pC.topBone.transform.position + (3 * pC.topBone.transform.TransformDirection(Vector3.up));
-                transform.rotation = pC.topBone.transform.rotation;
+                transform.position = pC.topBone.transform.position + (3 * pC.topBone.transform.TransformDirection(Vector3.right));
+                transform.rotation = pC.topBone.transform.rotation * Quaternion.Euler(90, 90, 0);
             }
         }
         else if (topOrBottom == 2)
@@ -191,8 +192,8 @@ public class Arrow : MonoBehaviour
             if (pC.bottomBone != null)
             {
 
-                transform.position = pC.bottomBone.transform.position + (3 * pC.bottomBone.transform.TransformDirection(Vector3.down));
-                transform.rotation = pC.bottomBone.transform.rotation * Quaternion.Euler(0,0,180);
+                transform.position = pC.bottomBone.transform.position + (3 * pC.bottomBone.transform.TransformDirection(Vector3.left));
+                transform.rotation = pC.bottomBone.transform.rotation * Quaternion.Euler(90, -90, 0);
             }
         }
     }

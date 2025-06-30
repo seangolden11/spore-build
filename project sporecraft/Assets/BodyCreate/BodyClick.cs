@@ -35,11 +35,8 @@ public class BodyClick : MonoBehaviour
 
     void Update()
     {
-        if (Input.GetMouseButtonDown(0) && EventSystem.current.IsPointerOverGameObject())
-        {
-            ResetClick();
-        }
-        else if (Input.GetMouseButtonDown(0) && !EventSystem.current.IsPointerOverGameObject())
+        
+        if (Input.GetMouseButtonDown(0) && !EventSystem.current.IsPointerOverGameObject())
         {
             if (isbuttondown)
                 return;
@@ -125,7 +122,7 @@ public class BodyClick : MonoBehaviour
         if (Input.GetMouseButton(0) && targetObject != null)
         {
             Vector3 nextPos = GetMouseWorldPos() + offset;
-            nextPos.x = targetObject.transform.position.x;
+            nextPos.z = targetObject.transform.position.z;
             targetObject.transform.position = nextPos;
         }
 
